@@ -1,0 +1,142 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.1.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: eec3ac330d3fd6e116066a19b1b1b5f9ce846d99e148e00af9b618d5189e7b16
+
+name:           sprite
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/sprite#readme>
+homepage:       https://github.com/ranjitjhala/sprite#readme
+bug-reports:    https://github.com/ranjitjhala/sprite/issues
+author:         Ranjit Jhala
+maintainer:     jhala@cs.ucsd.edu
+copyright:      2019 Ranjit Jhala
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/ranjitjhala/sprite
+
+library
+  exposed-modules:
+      Language.Sprite.Common
+      Language.Sprite.Common.Misc
+      Language.Sprite.Common.UX
+      Language.Sprite.L1
+      Language.Sprite.L1.Check
+      Language.Sprite.L1.Constraints
+      Language.Sprite.L1.Parse
+      Language.Sprite.L1.Prims
+      Language.Sprite.L1.Types
+      Language.Sprite.L2
+      Language.Sprite.L2.Check
+      Language.Sprite.L2.Constraints
+      Language.Sprite.L2.Parse
+      Language.Sprite.L2.Prims
+      Language.Sprite.L2.Types
+      Language.Sprite.L3
+      Language.Sprite.L3.Check
+      Language.Sprite.L3.Constraints
+      Language.Sprite.L3.Parse
+      Language.Sprite.L3.Prims
+      Language.Sprite.L3.Types
+      Language.Sprite.L4
+      Language.Sprite.L4.Check
+      Language.Sprite.L4.Constraints
+      Language.Sprite.L4.Elaborate
+      Language.Sprite.L4.Parse
+      Language.Sprite.L4.Prims
+      Language.Sprite.L4.Types
+      Language.Sprite.L5
+      Language.Sprite.L5.Check
+      Language.Sprite.L5.Constraints
+      Language.Sprite.L5.Elaborate
+      Language.Sprite.L5.Parse
+      Language.Sprite.L5.Prims
+      Language.Sprite.L5.Types
+      Language.Sprite.L6
+      Language.Sprite.L6.Check
+      Language.Sprite.L6.Constraints
+      Language.Sprite.L6.Elaborate
+      Language.Sprite.L6.Parse
+      Language.Sprite.L6.Prims
+      Language.Sprite.L6.Types
+  other-modules:
+      Paths_sprite
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , cmdargs
+    , containers
+    , deepseq
+    , directory
+    , filepath
+    , liquid-fixpoint >=0.8
+    , mtl
+    , megaparsec           >= 7.0.0 && < 9
+    , pretty
+    , process
+    , unordered-containers
+  default-language: Haskell2010
+
+executable sprite
+  main-is: Main.hs
+  other-modules:
+      Paths_sprite
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , cmdargs
+    , containers
+    , deepseq
+    , directory
+    , filepath
+    , liquid-fixpoint >=0.8
+    , mtl
+    , parsec
+    , pretty
+    , process
+    , sprite
+    , unordered-containers
+  default-language: Haskell2010
+
+test-suite liquid-tutorial-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_sprite
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , cmdargs
+    , containers
+    , deepseq
+    , directory
+    , filepath
+    , liquid-fixpoint >=0.8
+    , mtl
+    , parsec
+    , pretty
+    , process
+    , sprite
+    , stm
+    , tasty
+    , tasty-ant-xml
+    , tasty-hunit
+    , tasty-rerun
+    , transformers
+    , unordered-containers
+  default-language: Haskell2010

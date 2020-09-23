@@ -1,0 +1,38 @@
+elaborate: ([("fv##0",TBase TInt (Known "VV" (and (true))))],ELet (Rec (Bind "sum" ()) (EAnn (EFun (Bind "n" ()) (ELet (Let (Bind "cond" ()) (EApp (EApp (EImm (ECon (PBin BLe) ()) ()) (EVar "n" ()) ()) (ECon (PInt 0) ()) ()) ()) (EIf (EVar "cond" ()) (EImm (ECon (PInt 0) ()) ()) (ELet (Let (Bind "n1" ()) (EApp (EApp (EImm (ECon (PBin BMinus) ()) ()) (EVar "n" ()) ()) (ECon (PInt 1) ()) ()) ()) (ELet (Let (Bind "t1" ()) (EApp (EImm (EVar "sum" ()) ()) (EVar "n1" ()) ()) ()) (EApp (EApp (EImm (ECon (PBin BPlus) ()) ()) (EVar "n" ()) ()) (EVar "t1" ()) ()) ()) ()) ()) ()) ()) Val ("sum",TFun "n" (TBase TInt (Known "VV" (and (true)))) (TBase TInt (Known "v" (and (0 <= v)))),Just [EVar "n"]) ()) ()) (EImm (ECon (PInt 0) ()) ()) (),ELet (Rec (Bind "sum" ()) (EAnn (EFun (Bind "n" ()) (ELet (Let (Bind "cond" ()) (EApp (EApp (ETApp (EImm (ECon (PBin BLe) ()) ()) (TBase TInt (Known "VV" (and (true)))) ()) (EVar "n" ()) ()) (ECon (PInt 0) ()) ()) ()) (EIf (EVar "cond" ()) (EImm (ECon (PInt 0) ()) ()) (ELet (Let (Bind "n1" ()) (EApp (EApp (EImm (ECon (PBin BMinus) ()) ()) (EVar "n" ()) ()) (ECon (PInt 1) ()) ()) ()) (ELet (Let (Bind "t1" ()) (EApp (EImm (EVar "sum" ()) ()) (EVar "n1" ()) ()) ()) (EApp (EApp (EImm (ECon (PBin BPlus) ()) ()) (EVar "n" ()) ()) (EVar "t1" ()) ()) ()) ()) ()) ()) ()) Val ("sum",TFun "n" (TBase TInt (Known "VV" (and (true)))) (TBase TInt (Known "v" (and (0 <= v)))),Just [EVar "n"]) ()) ()) (EImm (ECon (PInt 0) ()) ()) ())
+
+Trace: [data-typs] : []
+Just (forall ((n int) (and (true)))
+      (and
+       (and
+        (forall ((VV int) (and (and (true)) (VV == n)))
+         (and
+          ((k_##1 VV n))
+          ((true))))
+        (forall ((VV int) (VV == 0))
+         (and
+          ((k_##1 VV n))
+          ((true)))))
+       (forall ((cond bool) (and (cond <=> n <= 0)))
+        (and
+         (forall ((lq_tmp$grd##7 bool) (cond))
+          (forall ((VV int) (VV == 0))
+           (((0 <= VV)))))
+         (forall ((lq_tmp$grd##7 bool) (not cond))
+          (forall ((n1 int) (and (n1 == n - 1)))
+           (and
+            (forall ((v int) (and (and (v == n - 1)) (v == n1)))
+             (and
+              ((true))
+              (((0 <= v
+                 && v < n)))))
+            (forall ((t1 int) (and (0 <= t1)))
+             (forall ((v int) (and (v == n + t1)))
+              (((0 <= v))))))))))))
+Saving Binary Query: ./.liquid/out.bfq
+
+Saving Text Query: ./.liquid/out.fq
+
+Saving Solution: ./.liquid/out.fqout
+
+[1;92mSafe
+[0m

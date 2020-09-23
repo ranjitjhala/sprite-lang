@@ -1,0 +1,70 @@
+name:                sprite 
+version:             0.1.0.0
+github:              "ranjitjhala/sprite"
+license:             MIT
+author:              "Ranjit Jhala"
+maintainer:          "jhala@cs.ucsd.edu"
+copyright:           "2019 Ranjit Jhala"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/githubuser/sprite#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- liquid-fixpoint >= 0.8
+- cmdargs
+- process 
+- directory 
+- filepath
+- containers
+- unordered-containers
+- deepseq 
+- pretty
+- parsec
+- parser-combinators
+- megaparsec >= 7.0.0 && < 9 
+- mtl
+
+library:
+  source-dirs: src
+
+executables:
+  sprite:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - sprite
+
+tests:
+  liquid-tutorial-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - sprite
+    - tasty-rerun
+    - mtl
+    - stm
+    - tasty
+    - tasty-ant-xml
+    - tasty-hunit
+    - tasty-rerun
+    - transformers
+

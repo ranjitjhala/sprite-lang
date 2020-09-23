@@ -1,0 +1,83 @@
+elaborate: ([("fv##0",TBase TInt (Known "v" (and (0 <= v)))),("fv##1",TBase TInt (Known "v" (and (0 <= v))))],ELet (Rec (Bind "ack" ()) (EAnn (EFun (Bind "m" ()) (EFun (Bind "n" ()) (ELet (Let (Bind "condm" ()) (EApp (EApp (EImm (ECon (PBin BEq) ()) ()) (EVar "m" ()) ()) (ECon (PInt 0) ()) ()) ()) (ELet (Let (Bind "condn" ()) (EApp (EApp (EImm (ECon (PBin BEq) ()) ()) (EVar "n" ()) ()) (ECon (PInt 0) ()) ()) ()) (EIf (EVar "condm" ()) (EApp (EApp (EImm (ECon (PBin BPlus) ()) ()) (EVar "n" ()) ()) (ECon (PInt 1) ()) ()) (ELet (Let (Bind "m1" ()) (EApp (EApp (EImm (ECon (PBin BMinus) ()) ()) (EVar "m" ()) ()) (ECon (PInt 1) ()) ()) ()) (EIf (EVar "condn" ()) (EApp (EApp (EImm (EVar "ack" ()) ()) (EVar "m1" ()) ()) (ECon (PInt 1) ()) ()) (ELet (Let (Bind "n1" ()) (EApp (EApp (EImm (ECon (PBin BMinus) ()) ()) (EVar "n" ()) ()) (ECon (PInt 1) ()) ()) ()) (ELet (Let (Bind "r" ()) (EApp (EApp (EImm (EVar "ack" ()) ()) (EVar "m" ()) ()) (EVar "n1" ()) ()) ()) (EApp (EApp (EImm (EVar "ack" ()) ()) (EVar "m1" ()) ()) (EVar "r" ()) ()) ()) ()) ()) ()) ()) ()) ()) ()) ()) Val ("ack",TFun "m" (TBase TInt (Known "v" (and (0 <= v)))) (TFun "n" (TBase TInt (Known "v" (and (0 <= v)))) (TBase TInt (Known "VV" (and (true))))),Just [EVar "m",EVar "n"]) ()) ()) (EImm (ECon (PInt 0) ()) ()) (),ELet (Rec (Bind "ack" ()) (EAnn (EFun (Bind "m" ()) (EFun (Bind "n" ()) (ELet (Let (Bind "condm" ()) (EApp (EApp (ETApp (EImm (ECon (PBin BEq) ()) ()) (TBase TInt (Known "v" (and (0 <= v)))) ()) (EVar "m" ()) ()) (ECon (PInt 0) ()) ()) ()) (ELet (Let (Bind "condn" ()) (EApp (EApp (ETApp (EImm (ECon (PBin BEq) ()) ()) (TBase TInt (Known "v" (and (0 <= v)))) ()) (EVar "n" ()) ()) (ECon (PInt 0) ()) ()) ()) (EIf (EVar "condm" ()) (EApp (EApp (EImm (ECon (PBin BPlus) ()) ()) (EVar "n" ()) ()) (ECon (PInt 1) ()) ()) (ELet (Let (Bind "m1" ()) (EApp (EApp (EImm (ECon (PBin BMinus) ()) ()) (EVar "m" ()) ()) (ECon (PInt 1) ()) ()) ()) (EIf (EVar "condn" ()) (EApp (EApp (EImm (EVar "ack" ()) ()) (EVar "m1" ()) ()) (ECon (PInt 1) ()) ()) (ELet (Let (Bind "n1" ()) (EApp (EApp (EImm (ECon (PBin BMinus) ()) ()) (EVar "n" ()) ()) (ECon (PInt 1) ()) ()) ()) (ELet (Let (Bind "r" ()) (EApp (EApp (EImm (EVar "ack" ()) ()) (EVar "m" ()) ()) (EVar "n1" ()) ()) ()) (EApp (EApp (EImm (EVar "ack" ()) ()) (EVar "m1" ()) ()) (EVar "r" ()) ()) ()) ()) ()) ()) ()) ()) ()) ()) ()) Val ("ack",TFun "m" (TBase TInt (Known "v" (and (0 <= v)))) (TFun "n" (TBase TInt (Known "v" (and (0 <= v)))) (TBase TInt (Known "VV" (and (true))))),Just [EVar "m",EVar "n"]) ()) ()) (EImm (ECon (PInt 0) ()) ()) ())
+
+Trace: [data-typs] : []
+Just (forall ((n int) (and (0 <= n)))
+      (forall ((m int) (and (0 <= m)))
+       (and
+        (and
+         (forall ((v int) (and (and (0 <= v)) (v == m)))
+          (and
+           ((k_##1 v m n))
+           ((true))))
+         (forall ((VV int) (VV == 0))
+          (and
+           ((k_##1 VV m n))
+           ((true)))))
+        (forall ((condm bool) (and (condm <=> m == 0)))
+         (and
+          (and
+           (forall ((v int) (and (and (0 <= v)) (v == n)))
+            (and
+             ((k_##3 v m n condm))
+             ((true))))
+           (forall ((VV int) (VV == 0))
+            (and
+             ((k_##3 VV m n condm))
+             ((true)))))
+          (forall ((condn bool) (and (condn <=> n == 0)))
+           (forall ((lq_tmp$grd##9 bool) (not condm))
+            (forall ((m1 int) (and (m1 == m - 1)))
+             (and
+              (forall ((lq_tmp$grd##10 bool) (condn))
+               (and
+                (forall ((v int) (and (and (v == m - 1)) (v == m1)))
+                 (((0 <= v))))
+                (forall ((VV int) (VV == 1))
+                 (and
+                  (((0 <= VV)))
+                  (((0 <= m1
+                     && (m1 < m
+                         || (m1 == m
+                             && (0 <= VV
+                                 && VV < n))))))))))
+              (forall ((lq_tmp$grd##10 bool) (not condn))
+               (forall ((n1 int) (and (n1 == n - 1)))
+                (and
+                 (and
+                  (forall ((v int) (and (and (0 <= v)) (v == m)))
+                   (((0 <= v))))
+                  (forall ((v int) (and (and (v == n - 1)) (v == n1)))
+                   (and
+                    (((0 <= v)))
+                    (((0 <= m
+                       && (m < m
+                           || (m == m
+                               && (0 <= v
+                                   && v < n)))))))))
+                 (forall ((r int) (and (true)))
+                  (and
+                   (forall ((v int) (and (and (v == m - 1)) (v == m1)))
+                    (((0 <= v))))
+                   (forall ((VV int) (and (and (true)) (VV == r)))
+                    (and
+                     (((0 <= VV)))
+                     (((0 <= m1
+                        && (m1 < m
+                            || (m1 == m
+                                && (0 <= VV
+                                    && VV < n))))))))))))))))))))))
+Saving Binary Query: ./.liquid/out.bfq
+
+Saving Text Query: ./.liquid/out.fq
+
+Saving Solution: ./.liquid/out.fqout
+
+[1;91mUnsafe
+[0mErrors found!
+
+ack.re:14:16-14:17: Subtype error
+ 
+ 
+        14|        ack (m1, r)
+                            ^^
+

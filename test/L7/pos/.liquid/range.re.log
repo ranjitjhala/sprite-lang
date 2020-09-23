@@ -1,0 +1,42 @@
+elaborate: ([("fv##2",TBase TInt (Known "VV" (and (true)))),("fv##0",TBase TInt (Known "VV" (and (true)))),("fv##1",TBase TInt (Known "VV" (and (true))))],ELet (Rec (Bind "range" ()) (EAnn (EFun (Bind "i" ()) (EFun (Bind "j" ()) (ELet (Let (Bind "cond" ()) (EApp (EApp (EImm (ECon (PBin BLt) ()) ()) (EVar "i" ()) ()) (EVar "j" ()) ()) ()) (EIf (EVar "cond" ()) (ELet (Let (Bind "i1" ()) (EApp (EApp (EImm (ECon (PBin BPlus) ()) ()) (EVar "i" ()) ()) (ECon (PInt 1) ()) ()) ()) (ELet (Let (Bind "tl" ()) (EApp (EApp (EImm (EVar "range" ()) ()) (EVar "i1" ()) ()) (EVar "j" ()) ()) ()) (EApp (EApp (EImm (EVar "Cons" ()) ()) (EVar "i" ()) ()) (EVar "tl" ()) ()) ()) ()) (EImm (EVar "Nil" ()) ()) ()) ()) ()) ()) Val ("range",TFun "i" (TBase TInt (Known "VV" (and (true)))) (TFun "j" (TBase TInt (Known "VV" (and (true)))) (TCon "list" [TBase TInt (Known "VV" (and (true)))] [] (Known "VV" (and (true))))),Just [EBin Minus (EVar "j") (EVar "i")]) ()) ()) (EImm (ECon (PInt 0) ()) ()) (),ELet (Rec (Bind "range" ()) (EAnn (EFun (Bind "i" ()) (EFun (Bind "j" ()) (ELet (Let (Bind "cond" ()) (EApp (EApp (ETApp (EImm (ECon (PBin BLt) ()) ()) (TBase TInt (Known "VV" (and (true)))) ()) (EVar "i" ()) ()) (EVar "j" ()) ()) ()) (EIf (EVar "cond" ()) (ELet (Let (Bind "i1" ()) (EApp (EApp (EImm (ECon (PBin BPlus) ()) ()) (EVar "i" ()) ()) (ECon (PInt 1) ()) ()) ()) (ELet (Let (Bind "tl" ()) (EApp (EApp (EImm (EVar "range" ()) ()) (EVar "i1" ()) ()) (EVar "j" ()) ()) ()) (EApp (EApp (ETApp (EImm (EVar "Cons" ()) ()) (TBase TInt (Known "VV" (and (true)))) ()) (EVar "i" ()) ()) (EVar "tl" ()) ()) ()) ()) (ETApp (EImm (EVar "Nil" ()) ()) (TBase TInt (Known "VV" (and (true)))) ()) ()) ()) ()) ()) Val ("range",TFun "i" (TBase TInt (Known "VV" (and (true)))) (TFun "j" (TBase TInt (Known "VV" (and (true)))) (TCon "list" [TBase TInt (Known "VV" (and (true)))] [] (Known "VV" (and (true))))),Just [EBin Minus (EVar "j") (EVar "i")]) ()) ()) (EImm (ECon (PInt 0) ()) ()) ())
+
+Trace: [data-typs] : [Data {dcName = "list", dcVars = ["a"], dcRVars = [], dcCtors = [(Bind "Nil" (SS {sp_start = SourcePos {sourceName = "range.re", sourceLine = Pos 4, sourceColumn = Pos 5}, sp_stop = SourcePos {sourceName = "range.re", sourceLine = Pos 4, sourceColumn = Pos 30}}),TAll (TV "a") (TCon "list" [TBase (TVar (TV "a")) (Known "VV" (and (true)))] [] (Known "v" (and (len v == 0))))),(Bind "Cons" (SS {sp_start = SourcePos {sourceName = "range.re", sourceLine = Pos 5, sourceColumn = Pos 5}, sp_stop = SourcePos {sourceName = "range.re", sourceLine = Pos 5, sourceColumn = Pos 10}}),TAll (TV "a") (TFun "x" (TBase (TVar (TV "a")) (Known "VV" (and (true)))) (TFun "xs" (TCon "list" [TBase (TVar (TV "a")) (Known "VV" (and (true)))] [] (Known "VV" (and (true)))) (TCon "list" [TBase (TVar (TV "a")) (Known "VV" (and (true)))] [] (Known "v" (and (len v == 1 + len xs)))))))], dcInv = Known "VV" (true)}]
+Just (forall ((j int) (and (true)))
+      (forall ((i int) (and (true)))
+       (and
+        (and
+         (forall ((VV int) (and (and (true)) (VV == i)))
+          (and
+           ((k_##1 VV j i))
+           ((true))))
+         (forall ((VV int) (and (and (true)) (VV == j)))
+          (and
+           ((k_##1 VV j i))
+           ((true)))))
+        (forall ((cond bool) (and (cond <=> i < j)))
+         (forall ((lq_tmp$grd##10 bool) (cond))
+          (forall ((i1 int) (and (i1 == i + 1)))
+           (and
+            (forall ((VV int) (and (and (true)) (VV == j)))
+             (and
+              ((true))
+              (((0 <= VV - i1
+                 && VV - i1 < j - i)))))
+            (forall ((tl (list int)) (and (true)))
+             (and
+              (forall ((VV int) (and (and (true)) (VV == i)))
+               (and
+                ((k_##3 VV j i1 cond tl i))
+                ((true))))
+              (forall ((VV int) (and (true)))
+               (and
+                ((k_##3 VV j i1 cond tl i))
+                ((true)))))))))))))
+Saving Binary Query: ./.liquid/out.bfq
+
+Saving Text Query: ./.liquid/out.fq
+
+Saving Solution: ./.liquid/out.fqout
+
+[1;92mSafe
+[0m

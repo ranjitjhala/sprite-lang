@@ -1,0 +1,57 @@
+elaborate: ([("fv##0",TBase (TVar (TV "a")) (Known "VV" (and (and (true)) (and (true))))),("fv##1",TBase (TVar (TV "a")) (Known "VV" (and (and (true)) (and (true)))))],ELet (Rec (Bind "app" ()) (EAnn (EFun (Bind "xs" ()) (EFun (Bind "ys" ()) (ECase "xs" [Alt {altDaCon = "Nil", altBinds = [], altExpr = EImm (EVar "ys" ()) (), altLabel = ()},Alt {altDaCon = "Cons", altBinds = [Bind "h" (),Bind "t" ()], altExpr = ELet (Let (Bind "rest" ()) (EApp (EApp (EImm (EVar "app" ()) ()) (EVar "t" ()) ()) (EVar "ys" ()) ()) ()) (EApp (EApp (EImm (EVar "Cons" ()) ()) (EVar "h" ()) ()) (EVar "rest" ()) ()) (), altLabel = ()}] ()) ()) ()) Val ("app",TAll (TV "a") (TFun "xs" (TCon "list" [TBase (TVar (TV "a")) (Known "VV" (and (true)))] [] (Known "VV" (and (true)))) (TFun "_" (TCon "list" [TBase (TVar (TV "a")) (Known "VV" (and (true)))] [] (Known "VV" (and (true)))) (TCon "list" [TBase (TVar (TV "a")) (Known "VV" (and (true)))] [] (Known "VV" (and (true)))))),Just [EApp (EVar "len") (EVar "xs")]) ()) ()) (EImm (ECon (PInt 0) ()) ()) (),ELet (Rec (Bind "app" ()) (EAnn (ETLam (TV "a") (EFun (Bind "xs" ()) (EFun (Bind "ys" ()) (ECase "xs" [Alt {altDaCon = "Nil", altBinds = [], altExpr = EImm (EVar "ys" ()) (), altLabel = ()},Alt {altDaCon = "Cons", altBinds = [Bind "h" (),Bind "t" ()], altExpr = ELet (Let (Bind "rest" ()) (EApp (EApp (ETApp (EImm (EVar "app" ()) ()) (TBase (TVar (TV "a")) (Known "VV" (and (and (true)) (and (true))))) ()) (EVar "t" ()) ()) (EVar "ys" ()) ()) ()) (EApp (EApp (ETApp (EImm (EVar "Cons" ()) ()) (TBase (TVar (TV "a")) (Known "VV" (and (and (true)) (and (true))))) ()) (EVar "h" ()) ()) (EVar "rest" ()) ()) (), altLabel = ()}] ()) ()) ()) ()) Val ("app",TAll (TV "a") (TFun "xs" (TCon "list" [TBase (TVar (TV "a")) (Known "VV" (and (true)))] [] (Known "VV" (and (true)))) (TFun "_" (TCon "list" [TBase (TVar (TV "a")) (Known "VV" (and (true)))] [] (Known "VV" (and (true)))) (TCon "list" [TBase (TVar (TV "a")) (Known "VV" (and (true)))] [] (Known "VV" (and (true)))))),Just [EApp (EVar "len") (EVar "xs")]) ()) ()) (EImm (ECon (PInt 0) ()) ()) ())
+
+Trace: [data-typs] : [Data {dcName = "list", dcVars = ["a"], dcRVars = [], dcCtors = [(Bind "Nil" (SS {sp_start = SourcePos {sourceName = "list00.re", sourceLine = Pos 4, sourceColumn = Pos 5}, sp_stop = SourcePos {sourceName = "list00.re", sourceLine = Pos 4, sourceColumn = Pos 30}}),TAll (TV "a") (TCon "list" [TBase (TVar (TV "a")) (Known "VV" (and (true)))] [] (Known "v" (and (len v == 0))))),(Bind "Cons" (SS {sp_start = SourcePos {sourceName = "list00.re", sourceLine = Pos 5, sourceColumn = Pos 5}, sp_stop = SourcePos {sourceName = "list00.re", sourceLine = Pos 5, sourceColumn = Pos 10}}),TAll (TV "a") (TFun "x" (TBase (TVar (TV "a")) (Known "VV" (and (true)))) (TFun "xs" (TCon "list" [TBase (TVar (TV "a")) (Known "VV" (and (true)))] [] (Known "VV" (and (true)))) (TCon "list" [TBase (TVar (TV "a")) (Known "VV" (and (true)))] [] (Known "v" (and (len v == 1 + len xs)))))))], dcInv = Known "v" (len v > 0)}]
+Just (and
+      (and
+       (forall ((v (list a)) (and (len v == 0)))
+        (((len v > 0))))
+       (forall ((x a) (and (true)))
+        (forall ((xs (list a)) (and (and (true)) (len xs > 0)))
+         (forall ((v (list a)) (and (len v == 1 + len xs)))
+          (((len v > 0)))))))
+      (forall ((xs (list a)) (and (and (true)) (len xs > 0)))
+       (forall ((ys (list a)) (and (and (true)) (len ys > 0)))
+        (forall ((h a) (and (and (true)) (and (true))))
+         (forall ((t (list a)) (and (and (true)) (len t > 0)))
+          (forall ((xs (list a)) (and (and (and (true)) (and (len xs == 1 + len t))) (len xs > 0)))
+           (and
+            (and
+             (and
+              (forall ((VV (list a)) (and (and (and (true)) (VV == t)) (len VV > 0)))
+               (and
+                ((true))
+                (((0 <= len VV
+                   && len VV < len xs)))))
+              (forall ((VV a) (and (and (true)) (and (true))))
+               (and
+                ((k_##1 VV xs t ys h))
+                ((true)))))
+             (forall ((VV a) (and (true)))
+              (and
+               ((k_##1 VV xs t ys h))
+               ((true)))))
+            (forall ((rest (list a)) (and (and (true)) (len rest > 0)))
+             (and
+              (forall ((VV a) (and (and (and (true)) (and (true))) (VV == h)))
+               (and
+                ((k_##3 VV xs t ys h rest))
+                ((true))))
+              (forall ((VV##0 a) (and (k_##1 VV##0 xs t ys h) (and (true))))
+               (and
+                ((k_##3 VV##0 xs t ys h rest))
+                ((true)))))))))))))
+Saving Binary Query: ./.liquid/out.bfq
+
+Saving Text Query: ./.liquid/out.fq
+
+Saving Solution: ./.liquid/out.fqout
+
+[1;91mUnsafe
+[0mErrors found!
+
+list00.re:4:5-4:30: Subtype error
+ 
+ 
+         4|    | Nil                      => [v| len(v) = 0] 
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+

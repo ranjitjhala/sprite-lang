@@ -1,0 +1,6 @@
+packages: .
+
+source-repository-package
+    type: git
+    location: https://github.com/ucsd-progsys/liquid-fixpoint
+    tag: abb4186c0592293398f2e1a66cbb88d65b1802b1

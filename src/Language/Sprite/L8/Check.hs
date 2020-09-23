@@ -34,7 +34,7 @@ vcgen (Prog qs ms e typs) = do
   let rfls = cgiConsts cgi
   let syms = M.fromList (ps ++ ms ++ rfls)
   let c'   = strengthenInv env c
-  let decs = reflectData <$> Misc.traceShow "data-typs" typs
+  let decs = reflectData <$> {- Misc.traceShow "data-typs" -} typs
   return   $ mkQuery (qs ++ pqs) (cgiKVars cgi) (cAnd cI c') syms (cgiDefs cgi) decs
 
 mkQuery :: [F.Qualifier] 

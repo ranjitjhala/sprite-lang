@@ -281,7 +281,7 @@ freshInt = do
 addReflectVar :: Ident -> RType -> [(F.Symbol, F.Sort)] -> F.Sort -> F.Expr -> CG ()
 addReflectVar f t xts ot e = modify $ \s -> 
   let cgi  = cgInfo s
-      fDef = Misc.traceShow "mkEquation" $ F.mkEquation f xts e ot
+      fDef = {- Misc.traceShow "mkEquation" $ -} F.mkEquation f xts e ot
   in 
     s { cgInfo = cgi { cgiConsts = (f, rTypeSort t) : cgiConsts cgi
                      , cgiDefs   = fDef : cgiDefs cgi

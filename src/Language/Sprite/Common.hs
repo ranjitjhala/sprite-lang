@@ -16,6 +16,7 @@ import qualified Language.Fixpoint.Types.Config as FC
 import qualified Language.Fixpoint.Types.Errors as F
 import qualified Language.Fixpoint.Types        as F 
 import qualified Language.Fixpoint.Misc         as F
+import qualified Language.Fixpoint.Utils.Files  as F
 import qualified Language.Sprite.Common.UX      as UX
 
 type SrcCstr   = H.Cstr      UX.UserError
@@ -40,30 +41,34 @@ crashUserError :: String -> [UX.UserError] -> IO a
 crashUserError msg es = exitWith =<< resultExit (F.Crash es msg)
 
 ---------------------------------------------------------------------------
-checkValid :: SrcQuery -> IO SrcResult
+checkValid :: FilePath -> SrcQuery -> IO SrcResult
 ---------------------------------------------------------------------------
-checkValid = checkValidWithCfg fpConfig
+checkValid f = checkValidWithCfg f fpConfig
 
 ---------------------------------------------------------------------------
-checkValidPLE :: SrcQuery -> IO SrcResult
+checkValidPLE :: FilePath -> SrcQuery -> IO SrcResult
 ---------------------------------------------------------------------------
-checkValidPLE q = do 
-  pleCfg <- FC.withPragmas fpConfig ["--rewrite", "--save"]
-  checkValidWithCfg pleCfg q 
+checkValidPLE f q = do 
+  pleCfg <- FC.withPragmas fpConfig ["--rewrite"]
+  checkValidWithCfg f pleCfg q 
 
-checkValidWithCfg :: FC.Config -> SrcQuery -> IO SrcResult
-checkValidWithCfg cfg q = do
-  dumpQuery q 
+checkValidWithCfg :: FilePath -> FC.Config -> SrcQuery -> IO SrcResult
+checkValidWithCfg f cfg q = do
+  dumpQuery f q 
   (fmap snd . F.resStatus) <$> H.solve cfg q
 
 fpConfig :: FC.Config
 fpConfig = FC.defConfig 
-  { FC.eliminate = FC.Some
-  , FC.save      = True   
-  }
+  { FC.eliminate = FC.Some }
 
-dumpQuery :: SrcQuery -> IO ()
-dumpQuery q = when True (putStrLn . PJ.render . F.pprint . canonCstr . H.qCstr $ q)
+dumpQuery :: FilePath -> SrcQuery -> IO ()
+dumpQuery f q = when True $ do 
+  -- putStrLn (F.wrapStars "BEGIN: Horn VC")
+  let smtFile = F.extFileName F.Smt2 f
+  F.ensurePath smtFile
+  writeFile smtFile (PJ.render . F.pprint $ q)
+  -- putStrLn (F.wrapStars "END: Horn VC")
+
 ---------------------------------------------------------------------------
 resultExit :: SrcResult -> IO ExitCode
 ---------------------------------------------------------------------------

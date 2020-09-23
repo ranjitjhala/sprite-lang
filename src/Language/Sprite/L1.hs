@@ -16,6 +16,6 @@ sprite f = do
   putStrLn (show (void src))
   res <- case vcgen src of 
            Left errs -> pure (F.Crash errs "VCGen failure") 
-           Right vc  -> checkValid vc 
+           Right vc  -> checkValid f vc 
   ec  <- resultExit res
   exitWith ec

@@ -13,6 +13,6 @@ sprite f = do
   src <- parseFile f
   res <- case vcgen src of 
            Left errs -> pure (F.Crash errs "VCGen failure") 
-           Right vc  -> checkValidPLE vc 
+           Right vc  -> checkValidPLE f vc 
   ec  <- resultExit res
   exitWith ec

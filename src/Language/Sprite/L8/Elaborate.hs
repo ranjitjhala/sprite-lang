@@ -24,7 +24,7 @@ import Debug.Trace (trace)
 -------------------------------------------------------------------------------
 elaborate   :: Env -> SrcExpr -> ElbExpr
 -------------------------------------------------------------------------------
-elaborate g e = trace _msg e''
+elaborate g e = {- trace _msg -} e''
   where 
     _msg      = "elaborate: " ++ show (F.toListSEnv su, void e, void e'')
     e''       = subsTy su e'

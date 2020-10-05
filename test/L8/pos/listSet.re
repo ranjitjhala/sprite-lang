@@ -1,3 +1,6 @@
+
+
+
 /*@ measure len : list('a) => int */
 type list('a) [v|len(v) >= 0] =
   | Nil                      => [v| v = Nil && len(v) = 0]  
@@ -42,6 +45,7 @@ let rec app_elts = (xs, ys) => {
   | Cons(x, xs') => app_elts(xs', ys)
   }
 };
+
 
 /*@ val rev_elts : xs:list('a) => int[v|elts(rev(xs)) = elts(xs)] / len(xs) 
  */

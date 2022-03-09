@@ -78,12 +78,10 @@ check :: Env -> SrcExpr -> RType -> CG SrcCstr
 
  -}
 check g (EFun bx e l) (TFun y s t) | y == x = do 
-  c     <- check (extEnv g bx s') e t'
+  c     <- check (extEnv g bx s) e t
   return $ cAll l x s c
   where
     x  = bindId bx
-    s' = subst s y x 
-    t' = subst t y x
 
 {- [Chk-Let] 
 

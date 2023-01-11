@@ -7,45 +7,52 @@ packages:
 - completed:
     hackage: intern-0.9.2@sha256:85eae3bd0a6cbfc622c0c70aa476641971bcd5e59dbc4c7a4b17888e432a5bd5,1619
     pantry-tree:
-      size: 921
       sha256: 23a96e5332f89615698291ed8e28a410b8a4a01af70de15869a8565602d89360
+      size: 921
   original:
     hackage: intern-0.9.2
 - completed:
     hackage: located-base-0.1.1.1@sha256:7c6395f2b6fbf2d5f76c3514f774423838c0ea94e1c6a5530dd3c94b30c9d1c8,1904
     pantry-tree:
-      size: 534
       sha256: 9d7b96ce785b464253dcf0ac2d8eb0be4cae6b96ed3960d66b81c373b540ed3f
+      size: 534
   original:
     hackage: located-base-0.1.1.1
 - completed:
     hackage: text-format-0.3.2@sha256:2a3fc17cf87120fcfdbca62a0da59759755549285841cdc1483081c35fb3d115,1814
     pantry-tree:
-      size: 1029
       sha256: 2db26ddb77184186e0d5b2b020bdfbeb044c168024767b1fa3691682ca618896
+      size: 1029
   original:
     hackage: text-format-0.3.2
 - completed:
     hackage: tasty-rerun-1.1.14@sha256:ba9c19a281535bea566e1044bc02c36ef17abcb310af4b6a149ec11780c7ce35,3083
     pantry-tree:
-      size: 284
       sha256: f6b89e2e06d38d0a2d73c220648811a54684b476778904416b22f1ccae7eab67
+      size: 284
   original:
     hackage: tasty-rerun-1.1.14
 - completed:
-    name: liquid-fixpoint
-    version: 0.8.10.2.1
-    git: https://github.com/ucsd-progsys/liquid-fixpoint
+    hackage: rest-rewrite-0.4.0@sha256:be93d899f7dece33f2a7613eb3dabd24d139f9cb2fc09f9efedfdce4ba6eb276,3923
     pantry-tree:
-      size: 20326
-      sha256: 6774b6ef08a744a825c05656e84d12c77eb99edbbe5c27dd39645d573fb3abba
-    commit: d77c1eb45dc2ac73c5c547ed3353215ec329c65b
+      sha256: ad19ccb2185ac0b58ddfd2eede69e6444986e687232e1504eb04ce7bb6e39368
+      size: 4018
   original:
+    hackage: rest-rewrite-0.4.0@sha256:be93d899f7dece33f2a7613eb3dabd24d139f9cb2fc09f9efedfdce4ba6eb276,3923
+- completed:
+    commit: 98d21934ceda146b4280c73552cc387d0c497f56
     git: https://github.com/ucsd-progsys/liquid-fixpoint
-    commit: d77c1eb45dc2ac73c5c547ed3353215ec329c65b
+    name: liquid-fixpoint
+    pantry-tree:
+      sha256: 5b1e52d72c36c441b0291c03cd71b853e2df87242b7004a64b1cd44ab81485f1
+      size: 22680
+    version: 0.8.10.7.1
+  original:
+    commit: 98d21934ceda146b4280c73552cc387d0c497f56
+    git: https://github.com/ucsd-progsys/liquid-fixpoint
 snapshots:
 - completed:
-    size: 532383
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/16/10.yaml
-    sha256: 469d781ab6d2a4eceed6b31b6e4ec842dcd3cd1d11577972e86902603dce24df
-  original: lts-16.10
+    sha256: 79a786674930a89301b0e908fad2822a48882f3d01486117693c377b8edffdbe
+    size: 590102
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/18/27.yaml
+  original: lts-18.27

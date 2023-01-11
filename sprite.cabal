@@ -83,14 +83,14 @@ library
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      base                 >= 4.9.1.0 && < 5
     , cmdargs
     , containers
     , deepseq
     , directory
     , filepath
-    , liquid-fixpoint >=0.8
-    , megaparsec >=7.0.0 && <9
+    , liquid-fixpoint >=0.8.10.7.0
+    , megaparsec           >= 7.0.0 && < 10
     , mtl
     , parsec
     , parser-combinators
@@ -109,12 +109,12 @@ executable sprite
   build-depends:
       base >=4.7 && <5
     , cmdargs
-    , containers
+    , containers    >= 0.5
     , deepseq
     , directory
     , filepath
     , liquid-fixpoint >=0.8
-    , megaparsec >=7.0.0 && <9
+    , megaparsec >=7.0.0 && < 10
     , mtl
     , parsec
     , parser-combinators
@@ -135,12 +135,12 @@ test-suite liquid-tutorial-test
   build-depends:
       base >=4.7 && <5
     , cmdargs
-    , containers
+    , containers    >= 0.5
     , deepseq
     , directory
     , filepath
     , liquid-fixpoint >=0.8
-    , megaparsec >=7.0.0 && <9
+    , megaparsec >=7.0.0 && < 10
     , mtl
     , parsec
     , parser-combinators

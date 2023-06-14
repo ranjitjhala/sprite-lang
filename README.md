@@ -1,6 +1,6 @@
 # SPRITE
 
-An tutorial-style implementation of liquid/refinement types for a subset of Ocaml/Reason.
+A tutorial-style implementation of liquid/refinement types for a subset of Ocaml/Reason.
 
 ## Install
 

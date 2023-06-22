@@ -78,7 +78,7 @@ op =  (FP.reservedOp "*"    >> pure BTimes)
   <|> (FP.reservedOp "=="   >> pure BEq   )  
   <|> (FP.reservedOp ">"    >> pure BGt   )  
   <|> (FP.reservedOp ">="   >> pure BGe   )  
-  <|> (FP.reservedOp "&&"   >> pure BOr   )  
+  <|> (FP.reservedOp "&&"   >> pure BAnd  )  
   <|> (FP.reservedOp "||"   >> pure BOr   )  
 
 bop :: PrimOp -> SrcImm -> SrcImm -> F.SrcSpan -> SrcExpr

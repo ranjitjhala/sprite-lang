@@ -2,7 +2,6 @@
 --   aspects, i.e. error messages, source-positions, overall results.
 
 {-# LANGUAGE OverloadedStrings    #-}
-{-# LANGUAGE TypeSynonymInstances #-}
 {-# LANGUAGE FlexibleInstances    #-}
 {-# LANGUAGE DeriveGeneric        #-}
 
@@ -28,6 +27,7 @@ module Language.Sprite.Common.UX
   , panicS
   , renderErrors
   , fpUserError
+  , crash
 
   -- * Pretty Printing
   , Text
@@ -52,11 +52,14 @@ type Text = PJ.Doc
 tshow :: (Show a) => a -> PJ.Doc
 tshow = PJ.text . show
 
+crash :: [a] -> String -> F.FixResult a
+crash es = F.Crash [(e, Nothing) | e <- es]
+
 --------------------------------------------------------------------------------
 -- | Source Span Representation
 --------------------------------------------------------------------------------
 
--- instance NFData F.SrcSpan 
+-- instance NFData F.SrcSpan
 
 instance Semigroup F.SrcSpan where
   (<>) = mappendSpan
@@ -116,7 +119,7 @@ highlights :: Int -> [String] -> String
 highlights i ls = unlines $ zipWith cursorLine [i..] ls
 
 cursorLine :: Int -> String -> String
-cursorLine l s = printf "%s|  %s" (lineString l) s
+cursorLine l = printf "%s|  %s" (lineString l)
 
 lineString :: Int -> String
 lineString n = replicate (10 - nD) ' ' ++ nS
@@ -148,23 +151,23 @@ data UserError = Error
   }
   deriving (Show, Typeable, Generic)
 
-instance F.PPrint UserError where 
-  pprintTidy k = F.pprintTidy k . userErrorFP 
+instance F.PPrint UserError where
+  pprintTidy k = F.pprintTidy k . userErrorFP
 
-instance F.Fixpoint UserError where 
-  toFix = eMsg 
+instance F.Fixpoint UserError where
+  toFix = eMsg
 
-instance F.Loc UserError where 
+instance F.Loc UserError where
   srcSpan = eSpan
 
-instance NFData UserError 
+instance NFData UserError
 instance Exception [UserError]
 
 fpUserError :: F.Error1 -> UserError
 fpUserError e = mkError (F.errMsg e) (F.errLoc e)
 
-userErrorFP :: UserError -> F.Error 
-userErrorFP (Error d sp) = F.err sp d 
+userErrorFP :: UserError -> F.Error
+userErrorFP (Error d sp) = F.err sp d
 
 --------------------------------------------------------------------------------
 panic :: PJ.Doc -> F.SrcSpan -> a
@@ -194,10 +197,7 @@ renderError :: UserError -> IO Text
 renderError e = do
   let sp   = F.srcSpan e
   snippet <- readFileSpan sp
-  return   $ PJ.vcat [ F.pprint sp PJ.<> ":" PJ.<+> (eMsg e) 
+  return   $ PJ.vcat [ F.pprint sp PJ.<> ":" PJ.<+> eMsg e
                      , " "
                      , " "
-                     , PJ.text snippet ] 
-
-
- 
+                     , PJ.text snippet ]

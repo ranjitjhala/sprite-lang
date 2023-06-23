@@ -28,6 +28,7 @@ source-repository head
 library
   exposed-modules:
       Language.Sprite.Common
+      Language.Sprite.Common.Constraints
       Language.Sprite.Common.Misc
       Language.Sprite.Common.Parse
       Language.Sprite.Common.UX
@@ -107,13 +108,14 @@ executable sprite
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      -- base >=4.7 && <5
+      base          >= 4.9.1.0 && < 5
     , cmdargs
     , containers    >= 0.5
     , deepseq
     , directory
     , filepath
-    , liquid-fixpoint >=0.8
+    , liquid-fixpoint >=0.9
     , megaparsec >=7.0.0 && < 10
     , mtl
     , parsec
@@ -133,13 +135,13 @@ test-suite liquid-tutorial-test
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      base          >= 4.9.1.0 && < 5
     , cmdargs
     , containers    >= 0.5
     , deepseq
     , directory
     , filepath
-    , liquid-fixpoint >=0.8
+    , liquid-fixpoint >=0.9
     , megaparsec >=7.0.0 && < 10
     , mtl
     , parsec

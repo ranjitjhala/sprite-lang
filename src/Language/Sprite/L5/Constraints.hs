@@ -1,11 +1,11 @@
--- | This module has the kit needed to do constraint generation: 
+-- | This module has the kit needed to do constraint generation:
 --   namely, @Env@ironments, @SrcCstr@ manipulation, and @subst@itution.
 
 {-# LANGUAGE OverloadedStrings    #-}
 
-module Language.Sprite.L5.Constraints 
+module Language.Sprite.L5.Constraints
   ( -- * Constraints
-    cTrue, cAnd, cHead, cAll, pAnd
+    cAll
 
     -- * Substitutions
   , subst, substImm
@@ -16,12 +16,12 @@ module Language.Sprite.L5.Constraints
     -- * Environments
   , Env, empEnv, getEnv, extEnv, extEnvs
   , extEnvTV, grdSym, envSorts
-  
+
     -- * Case-Related manipulation
   , unfoldEnv, unfoldEnv'
 
     -- * Constraint Generation Monad
-  , CG, run, failWith, freshK 
+  , CG, run, failWith, freshK
 
   ) where
 
@@ -29,86 +29,50 @@ import qualified Data.List                     as L
 import qualified Data.Maybe                    as Mb
 import           Control.Monad.State
 import           Control.Monad.Except           (throwError)
-import qualified Language.Fixpoint.Horn.Types  as H 
-import qualified Language.Fixpoint.Types       as F 
+import qualified Language.Fixpoint.Horn.Types  as H
+import qualified Language.Fixpoint.Types       as F
 import qualified Language.Sprite.Common.UX     as UX
-import qualified Language.Sprite.Common.Misc   as Misc 
+import qualified Language.Sprite.Common.Misc   as Misc
 import           Language.Sprite.Common
-import           Language.Sprite.L5.Types 
-import           Language.Sprite.L5.Prims  
+import           Language.Sprite.Common.Constraints hiding (cHead)
+import           Language.Sprite.L5.Types
+import           Language.Sprite.L5.Prims
+import Language.Sprite.L1.Constraints (cAll')
 
 --------------------------------------------------------------------------------
 -- | Constraints ---------------------------------------------------------------
 --------------------------------------------------------------------------------
-cTrue :: SrcCstr 
-cTrue = H.CAnd []
 
-cAnd :: SrcCstr -> SrcCstr -> SrcCstr
-cAnd (H.CAnd []) c           = c 
-cAnd c           (H.CAnd []) = c 
-cAnd c1          c2          = H.CAnd [c1, c2] 
-
-cHead :: F.SrcSpan -> H.Pred -> SrcCstr 
-cHead _ (H.Reft p) 
-  | F.isTautoPred p = cTrue 
-cHead l (H.PAnd ps) = case filter (not . pTrivial) ps of 
-                        []  -> cTrue
-                        [p] -> mkHead l p 
-                        qs  -> mkHead l (H.PAnd qs)
-cHead l p           = mkHead l p
-
-mkHead :: F.SrcSpan -> H.Pred -> SrcCstr
-mkHead l p = case smash p of 
-               []  -> cTrue
-               [q] -> mk1 l q 
-               qs  -> H.CAnd (mk1 l <$> qs)
-
-mk1 :: F.SrcSpan -> H.Pred -> SrcCstr
-mk1 l p = H.Head p (UX.mkError "Subtype error" l)
-
-smash :: H.Pred -> [H.Pred]
-smash (H.PAnd ps) = concatMap smash ps
-smash p           = [p]
 
 cAll :: F.SrcSpan -> F.Symbol -> RType -> SrcCstr -> SrcCstr
-cAll _ x t c = case sortPred x t of 
-  Just (so, p) -> H.All (H.Bind x so p) c
-  _            -> c
+cAll l x t = cAll' l x (sortPred x t)
 
-pAnd :: [H.Pred] -> H.Pred
-pAnd ps = case filter (not . pTrivial) ps of 
-            [p] -> p 
-            ps' -> H.PAnd ps'
 
-pTrivial :: H.Pred -> Bool
-pTrivial (H.PAnd []) = True
-pTrivial (H.Reft p)  = F.isTautoPred p 
-pTrivial _           = False
 
 sortPred :: F.Symbol -> RType -> Maybe (F.Sort, H.Pred)
-sortPred x t@(TBase _   (Known v p)) = Just (rTypeSort t, subst p v x) 
-sortPred x t@(TCon  _ _ (Known v p)) = Just (rTypeSort t, subst p v x) 
+sortPred x t@(TBase _   (Known v p)) = Just (rTypeSort t, subst p v x)
+sortPred x t@(TCon  _ _ (Known v p)) = Just (rTypeSort t, subst p v x)
 sortPred _ _                         = Nothing
 
 --------------------------------------------------------------------------------
 -- | Environments --------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-data Env = Env 
-  { eBinds :: !(F.SEnv RType)     -- ^ value binders 
+data Env = Env
+  { eBinds :: !(F.SEnv RType)     -- ^ value binders
   , eSize  :: !Integer            -- ^ number of binders?
-  , eTVars :: !(F.SEnv ())        -- ^ type variables 
+  , eTVars :: !(F.SEnv ())        -- ^ type variables
   }
 
-extEnv :: Env -> F.Symbol -> RType -> Env  
-extEnv env x t 
+extEnv :: Env -> F.Symbol -> RType -> Env
+extEnv env x t
   | x == junkSymbol = env
   | otherwise       = env { eBinds = F.insertSEnv x t (eBinds env)
                           , eSize  = 1 + eSize env
                           }
 
 extEnvs :: Env -> [(F.Symbol, RType)] -> Env
-extEnvs = L.foldl' (\g (x, t) -> extEnv g x t) 
+extEnvs = L.foldl' (\g (x, t) -> extEnv g x t)
 
 extEnvTV :: Env -> TVar -> Env
 extEnvTV env (TV a) = env { eTVars = F.insertSEnv a () (eTVars env) }
@@ -116,15 +80,15 @@ extEnvTV env (TV a) = env { eTVars = F.insertSEnv a () (eTVars env) }
 grdSym :: Env -> F.Symbol
 grdSym env = F.tempSymbol "grd" (eSize env)
 
-predRType :: F.Pred -> RType 
+predRType :: F.Pred -> RType
 predRType p = TBase TBool (known $ F.predReft p)
 
 getEnv :: Env -> F.Symbol -> Maybe RType
-getEnv env x = F.lookupSEnv x (eBinds env) 
+getEnv env x = F.lookupSEnv x (eBinds env)
 
-empEnv :: [SrcData] -> Env 
+empEnv :: [SrcData] -> Env
 empEnv typs = Env ctorEnv 0 F.emptySEnv
-  where 
+  where
     ctorEnv = F.fromListSEnv (prelude ++ concatMap dataSigs typs)
 
 
@@ -140,14 +104,14 @@ envSorts env = [ (x, t) | (x, s) <- F.toListSEnv (eBinds env)
 --------------------------------------------------------------------------------
 -- | Case-Related Environment Manipulation -------------------------------------
 --------------------------------------------------------------------------------
-unfoldEnv' :: Env -> Ident -> DaCon -> [SrcBind] -> Maybe Env 
+unfoldEnv' :: Env -> Ident -> DaCon -> [SrcBind] -> Maybe Env
 unfoldEnv' g y c zs = extEnvs g <$> unfoldEnv g y c zs
 
 unfoldEnv :: Env -> Ident -> DaCon -> [SrcBind] -> Maybe [(F.Symbol, RType)]
-unfoldEnv g y c zs = unfold g c y >>= extCase y zs 
+unfoldEnv g y c zs = unfold g c y >>= extCase y zs
 
 unfold:: Env -> DaCon -> Ident -> Maybe (RType, RType)
-unfold g c y = do 
+unfold g c y = do
   sig              <- getEnv g c
   ty@(TCon _ ts _) <- getEnv g y
   let (as, t)       = bkAll  sig
@@ -162,21 +126,21 @@ extCase y zs (ty, t) = go [] (F.symbol <$> zs) t
     go _   _      _            = Nothing
 
 meet :: RType -> RType -> RType
-meet t1 t2 = case rTypeReft t2 of 
+meet t1 t2 = case rTypeReft t2 of
                Just r2 -> strengthenTop t1 r2
                Nothing -> t1
 
-{- 
-extCaseEnv :: Env -> [Bind F.SrcSpan] -> RType -> Maybe Env 
-extCaseEnv g (z:zs) (TFun _ s t) = extCaseEnv g' zs t 
-  where 
+{-
+extCaseEnv :: Env -> [Bind F.SrcSpan] -> RType -> Maybe Env
+extCaseEnv g (z:zs) (TFun _ s t) = extCaseEnv g' zs t
+  where
     g'                           = extEnv g (F.symbol z) s
-extCaseEnv g []     _          = Just g 
-extCaseEnv _ _      _          = Nothing 
+extCaseEnv g []     _          = Just g
+extCaseEnv _ _      _          = Nothing
 
 -}
 
- 
+
 
 -------------------------------------------------------------------------------
 -- | CG Monad -----------------------------------------------------------------
@@ -193,7 +157,7 @@ s0 :: CGState
 s0 = CGState 0 []
 
 run :: CG a -> Either [UX.UserError] (a, [SrcHVar])
-run act = do 
+run act = do
   (x, s) <- runStateT act s0
   return (x, cgKVars s)
 
@@ -222,9 +186,8 @@ freshValueSym :: CG F.Symbol
 freshValueSym = F.vv . Just <$> freshInt
 
 freshInt :: CG Integer
-freshInt = do 
+freshInt = do
   s    <- get
   let n = cgCount s
   put s { cgCount = 1 + n}
   return n
-

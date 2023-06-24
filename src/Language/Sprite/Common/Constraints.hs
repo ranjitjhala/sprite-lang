@@ -4,7 +4,7 @@
 
 module Language.Sprite.Common.Constraints
   ( -- * Constraints
-    cTrue, cAnd, cHead, cAll', pAnd, bind,
+    cTrue, cAnd, cHead, cAll', pAnd, bind
   ) where
 
 import qualified Language.Fixpoint.Horn.Types  as H
@@ -21,6 +21,7 @@ cTrue = H.CAnd []
 cAnd :: SrcCstr -> SrcCstr -> SrcCstr
 cAnd (H.CAnd []) c           = c
 cAnd c           (H.CAnd []) = c
+cAnd (H.CAnd cs) (H.CAnd ds) = H.CAnd (cs ++ ds)
 cAnd c1          c2          = H.CAnd [c1, c2]
 
 pAnd :: [H.Pred] -> H.Pred

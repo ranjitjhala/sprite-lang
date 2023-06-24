@@ -7,7 +7,7 @@ let inc = (x) => {
 
 /*@ val incf: x:int[v|0<=v] => int[v|0<=v] */
 let incf = (x) => {
-    /*@ val tmp : f:(int[v|0<=v] => int[v|0<=v]) => int[v|0<=v] */
+    /*@ val tmp : f:(z:int[v|0<=v] => int[v|0<=v]) => int[v|0<=v] */
     let tmp = (f) => {
         f(x)
     };

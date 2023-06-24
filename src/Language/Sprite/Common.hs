@@ -55,8 +55,23 @@ checkValidPLE f q = do
 
 checkValidWithCfg :: FilePath -> FC.Config -> SrcQuery -> IO SrcResult
 checkValidWithCfg f cfg q = do
-  dumpQuery f q
-  fmap snd . F.resStatus <$> H.solve cfg q
+  case simplifyCstr (H.qCstr q) of
+    Nothing -> return $ F.Safe mempty
+    Just c  -> do
+      let q' = (q { H.qCstr = c } )
+      dumpQuery f q'
+      fmap snd . F.resStatus <$> H.solve cfg q'
+
+simplifyCstr :: H.Cstr a -> Maybe (H.Cstr a)
+simplifyCstr = go
+  where
+    go c@(H.Head {}) = Just c
+    go (H.CAnd cs) = case Mb.mapMaybe go cs of
+                       []  -> Nothing
+                       cs' -> Just (H.CAnd cs')
+    go (H.All b c) = do { c' <- go c; Just ( H.All b c' ) }
+    go (H.Any b c) = do { c' <- go c; Just ( H.Any b c' ) }
+
 
 fpConfig :: FC.Config
 fpConfig = FC.defConfig

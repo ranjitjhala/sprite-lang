@@ -12,7 +12,7 @@ import qualified Language.Sprite.Common.UX     as UX
 import           Language.Sprite.Common
 import qualified Data.Set                      as S
 import qualified Data.List                     as L
-import Data.Char (toUpper)
+import Data.Char (toUpper, isUpper)
 
 -- | Basic types --------------------------------------------------------------
 newtype TVar = TV F.Symbol
@@ -358,4 +358,9 @@ bkAll (TAll a s) = (a:as, t) where (as, t) = bkAll s
 bkAll t          = ([]  , t)
 
 fTyCon :: TyCon -> F.FTycon
-fTyCon = F.symbolFTycon . F.dummyLoc . F.symbol . ('T' :) . F.symbolString
+fTyCon sym = F.symbolFTycon (F.dummyLoc sym')
+  where
+    c:cs   = F.symbolString sym
+    sym'
+      | isUpper c = sym
+      | otherwise = F.symbol ('T' :c:cs)

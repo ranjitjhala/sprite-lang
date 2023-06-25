@@ -16,6 +16,7 @@ import qualified Language.Sprite.Common.UX              as UX
 import           Language.Sprite.Common ( Label(..) )
 import qualified Data.Set                               as S
 import qualified Data.List                              as L
+import Data.Char (isUpper)
 
 -- | Basic types --------------------------------------------------------------
 newtype TVar = TV F.Symbol
@@ -433,7 +434,12 @@ bkRAll (TRAll p s) = (p:ps, t) where (ps, t) = bkRAll s
 bkRAll t           = ([]  , t)
 
 fTyCon :: TyCon -> F.FTycon
-fTyCon = F.symbolFTycon . F.dummyLoc . F.symbol . ('T' :) . F.symbolString
+fTyCon sym = F.symbolFTycon (F.dummyLoc sym')
+  where
+    c:cs   = F.symbolString sym
+    sym'
+      | isUpper c = sym
+      | otherwise = F.symbol ('T' :c:cs)
 
 data FunSig = FunSig
   { fsTVars  :: [TVar]            -- ^ type variables

@@ -56,10 +56,10 @@ data Env = Env
 
 extEnv :: Env -> F.Symbol -> RType -> Env
 extEnv env x t
-  | x == junkSymbol = env
-  | otherwise       = Env { eBinds = F.insertSEnv x t (eBinds env)
-                          , eSize  = 1 + eSize env
-                          }
+  | isAnon x  = env
+  | otherwise = Env { eBinds = F.insertSEnv x t (eBinds env)
+                    , eSize  = 1 + eSize env
+                    }
 
 grdSym :: Env -> F.Symbol
 grdSym env = F.tempSymbol "grd" (eSize env)

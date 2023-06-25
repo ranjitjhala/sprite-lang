@@ -3,7 +3,11 @@
 {-# LANGUAGE OverloadedStrings    #-}
 
 module Language.Sprite.Common.Constraints
-  ( -- * Constraints
+  (
+  -- * Symbols
+    anon, isAnon,
+
+    -- * Constraints
     cTrue, cAnd, cHead, cAll', pAnd, bind
   ) where
 
@@ -11,6 +15,18 @@ import qualified Language.Fixpoint.Horn.Types  as H
 import qualified Language.Fixpoint.Types       as F
 import qualified Language.Sprite.Common.UX     as UX
 import           Language.Sprite.Common
+
+--------------------------------------------------------------------------------
+-- | Symbols -------------------------------------------------------------------
+--------------------------------------------------------------------------------
+anonSymbol :: F.Symbol
+anonSymbol = "anon"
+
+anon :: Integer -> F.Symbol
+anon = F.tempSymbol anonSymbol
+
+isAnon :: F.Symbol -> Bool
+isAnon = F.isPrefixOfSym anonSymbol
 
 --------------------------------------------------------------------------------
 -- | Constraints ---------------------------------------------------------------

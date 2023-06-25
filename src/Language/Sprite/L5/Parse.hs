@@ -1,18 +1,18 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TupleSections     #-}
 
-module Language.Sprite.L5.Parse 
-  ( 
+module Language.Sprite.L5.Parse
+  (
     -- * Parsing programs
       parseFile
-    , parseWith 
-    
+    , parseWith
+
     -- * Parsing combinators
     , measureP
-    , rtype 
+    , rtype
     , expr
     , typP
-    , switchExpr 
+    , switchExpr
     , altP
   ) where
 
@@ -28,10 +28,11 @@ import           Language.Sprite.Common
 import           Language.Sprite.Common.Parse
 import qualified Language.Sprite.Common.Misc as Misc
 import           Language.Sprite.L5.Types hiding (immExpr)
+import Language.Sprite.Common.Constraints
 -- import           Language.Sprite.L5.Constraints
 
 parseFile :: FilePath -> IO SrcProg
-parseFile = FP.parseFromFile prog 
+parseFile = FP.parseFromFile prog
 
 parseWith :: FP.Parser a -> FilePath -> String -> a
 parseWith = FP.doParse'
@@ -40,7 +41,7 @@ parseWith = FP.doParse'
 -- | Top-Level Expression Parser
 --------------------------------------------------------------------------------
 prog :: FP.Parser SrcProg
-prog = do 
+prog = do
   qs   <- quals
   ms   <- try (many measureP) <|> return []
   typs <- many typP
@@ -50,48 +51,48 @@ prog = do
 measureP :: FP.Parser (F.Symbol, F.Sort)
 measureP = annL >> (Misc.mapSnd (rTypeSort . generalize) <$> tyBindP "measure")
 
-typP :: FP.Parser SrcData 
-typP = do 
+typP :: FP.Parser SrcData
+typP = do
   reserved "type"
   tc    <- FP.lowerIdP
-  args  <- typArgs 
+  args  <- typArgs
   (FP.reservedOp "=" >> whiteSpace)
-  ctors <- ctorsP 
+  ctors <- ctorsP
   return (Data tc args (mkCtor tc args <$> ctors))
 
-data Ctor   = Ctor SrcBind [FunArg] (Maybe Reft) 
+data Ctor   = Ctor SrcBind [FunArg] (Maybe Reft)
 type FunArg = (F.Symbol, RType)
 
 ctorsP :: FP.Parser [Ctor]
-ctorsP = try (FP.semi >> return []) 
-      <|> (:) <$> ctorP <*> ctorsP 
+ctorsP = try (FP.semi >> return [])
+      <|> (:) <$> ctorP <*> ctorsP
 
 ctorP :: FP.Parser Ctor
-ctorP = Ctor <$> (whiteSpace *> mid *> cbind) <*> commaList funArgP <*> ctorResP 
+ctorP = Ctor <$> (whiteSpace *> mid *> cbind) <*> commaList funArgP <*> ctorResP
 
 cbind :: FP.Parser SrcBind
 cbind = withSpan' (Bind <$> FP.upperIdP)
 
 typArgs :: FP.Parser [F.Symbol]
-typArgs = commaList tvarP 
+typArgs = commaList tvarP
 
 ctorResP :: FP.Parser (Maybe Reft)
-ctorResP =  Just <$> (FP.reservedOp "=>" *> brackets concReftB) 
+ctorResP =  Just <$> (FP.reservedOp "=>" *> brackets concReftB)
         <|> return Nothing
 
 mkCtor :: Ident -> [Ident] -> Ctor -> (SrcBind, RType)
 mkCtor tc args c  = (dc, generalize dcType)
-  where 
+  where
     dcType        = foldr (\(x, t) s -> TFun x t s) dcRes xts
     dcRes         = TCon tc (rVar <$> args) dcReft
-    Ctor dc xts r = c 
+    Ctor dc xts r = c
     dcReft        = Mb.fromMaybe mempty r
 
 commaList :: FP.Parser a -> FP.Parser [a]
 commaList p = try (parens (sepBy p comma)) <|> return []
 
 quals :: FP.Parser [F.Qualifier]
-quals =  try ((:) <$> between annL annR qual <*> quals) 
+quals =  try ((:) <$> between annL annR qual <*> quals)
      <|> pure []
 
 qual ::FP.Parser F.Qualifier
@@ -103,11 +104,11 @@ expr =  try funExpr
     <|> try ifExpr
     <|> try switchExpr
     <|> try (FP.braces (expr <* whiteSpace))
-    <|> try appExpr 
+    <|> try appExpr
     <|> try binExp
     <|> expr0
 
-expr0 :: FP.Parser SrcExpr   
+expr0 :: FP.Parser SrcExpr
 expr0 =  try (FP.parens expr)
      <|> immExpr
 
@@ -116,22 +117,22 @@ appExpr = mkEApp <$> immExpr <*> parens (sepBy1 imm comma)
 
 binExp :: FP.Parser SrcExpr
 binExp = withSpan' $ do
-  x <- imm 
+  x <- imm
   o <- op
   y <- imm
-  return (bop o x y) 
+  return (bop o x y)
 
-op :: FP.Parser PrimOp 
+op :: FP.Parser PrimOp
 op =  (FP.reservedOp "*"    >> pure BTimes)
   <|> (FP.reservedOp "+"    >> pure BPlus )
   <|> (FP.reservedOp "-"    >> pure BMinus)
-  <|> (FP.reservedOp "<"    >> pure BLt   )  
-  <|> (FP.reservedOp "<="   >> pure BLe   )  
-  <|> (FP.reservedOp "=="   >> pure BEq   )  
-  <|> (FP.reservedOp ">"    >> pure BGt   )  
-  <|> (FP.reservedOp ">="   >> pure BGe   )  
-  <|> (FP.reservedOp "&&"   >> pure BAnd  )  
-  <|> (FP.reservedOp "||"   >> pure BOr   )  
+  <|> (FP.reservedOp "<"    >> pure BLt   )
+  <|> (FP.reservedOp "<="   >> pure BLe   )
+  <|> (FP.reservedOp "=="   >> pure BEq   )
+  <|> (FP.reservedOp ">"    >> pure BGt   )
+  <|> (FP.reservedOp ">="   >> pure BGe   )
+  <|> (FP.reservedOp "&&"   >> pure BAnd  )
+  <|> (FP.reservedOp "||"   >> pure BOr   )
 
 bop :: PrimOp -> SrcImm -> SrcImm -> F.SrcSpan -> SrcExpr
 bop o x y l = mkEApp (EImm (ECon (PBin o) l) l) [x, y]
@@ -139,56 +140,56 @@ bop o x y l = mkEApp (EImm (ECon (PBin o) l) l) [x, y]
 mkEApp :: SrcExpr -> [SrcImm] -> SrcExpr
 mkEApp = L.foldl' (\e y -> EApp e y (label e <> label y))
 
-letExpr :: FP.Parser SrcExpr 
+letExpr :: FP.Parser SrcExpr
 letExpr = withSpan' (ELet <$> decl <*> expr)
 
 ifExpr :: FP.Parser SrcExpr
-ifExpr = withSpan' $ do 
+ifExpr = withSpan' $ do
   FP.reserved "if"
-  v <- parens imm 
-  e1 <- expr 
+  v <- parens imm
+  e1 <- expr
   FP.reserved "else"
   e2 <- expr
-  return (EIf v e1 e2) 
+  return (EIf v e1 e2)
 
-switchExpr :: FP.Parser SrcExpr 
+switchExpr :: FP.Parser SrcExpr
 switchExpr = withSpan' $ do
   FP.reserved "switch"
   x    <- parens FP.lowerIdP
   alts <- braces (many altP)
-  return (ECase x alts) 
+  return (ECase x alts)
 
 altP :: FP.Parser SrcAlt
-altP = withSpan' $ Alt 
+altP = withSpan' $ Alt
          <$> (whiteSpace *> mid *> FP.upperIdP)
          -- <*> pure Nothing
-         <*> commaList binder 
+         <*> commaList binder
          <*> (FP.reservedOp "=>" *> expr)
 
 immExpr :: FP.Parser SrcExpr
-immExpr = do 
-  i <- imm 
+immExpr = do
+  i <- imm
   return (EImm i (label i))
 
 imm :: FP.Parser SrcImm
-imm = immInt <|> immBool <|> immId 
+imm = immInt <|> immBool <|> immId
 
 immInt :: FP.Parser SrcImm
 immInt = withSpan' (ECon . PInt  <$> FP.natural)
-       
+
 immBool :: FP.Parser SrcImm
-immBool = withSpan' (ECon . PBool <$> bool)  
+immBool = withSpan' (ECon . PBool <$> bool)
 
 immId :: FP.Parser SrcImm
-immId = withSpan' (EVar <$> identifier')  
+immId = withSpan' (EVar <$> identifier')
 
-bool :: FP.Parser Bool 
+bool :: FP.Parser Bool
 bool = (reserved "true"  >> pure True)
-    <|>(reserved "false" >> pure False) 
+    <|>(reserved "false" >> pure False)
 
 funExpr :: FP.Parser SrcExpr
-funExpr = withSpan' $ do 
-  xs    <- parens (sepBy1 binder comma) 
+funExpr = withSpan' $ do
+  xs    <- parens (sepBy1 binder comma)
   _     <- FP.reservedOp "=>"
   -- _     <- FP.reservedOp "{"
   body  <- braces (expr <* whiteSpace)
@@ -196,10 +197,10 @@ funExpr = withSpan' $ do
   return $ mkEFun xs body
 
 mkEFun :: [SrcBind] -> SrcExpr -> F.SrcSpan -> SrcExpr
-mkEFun bs e0 l = foldr (\b e -> EFun b e l) e0 bs 
+mkEFun bs e0 l = foldr (\b e -> EFun b e l) e0 bs
 
 -- | Annotated declaration
-decl :: FP.Parser SrcDecl 
+decl :: FP.Parser SrcDecl
 decl = mkDecl <$> ann <*> plainDecl
   where
     ann = (annL >> (Just <$> tyBindP "val")) <|> pure Nothing
@@ -208,7 +209,7 @@ type Ann = Maybe (F.Symbol, RType)
 
 annL, annR :: FP.Parser ()
 annL = reservedOp "/*@"
-annR = reservedOp "*/" 
+annR = reservedOp "*/"
 
 tyBindP :: String -> FP.Parser (F.Symbol, RType)
 tyBindP kw = do
@@ -216,59 +217,59 @@ tyBindP kw = do
   x <- FP.lowerIdP
   colon
   t <- rtype
-  annR 
+  annR
   return (x, t)
 
 {-
 between :: FP.Parser () -> FP.Parser () -> FP.Parser a -> FP.Parser a
-between lP rP xP =  do 
+between lP rP xP =  do
   lP
   x <- xP
   rP
   return x
  -}
-mkDecl :: Ann -> SrcDecl -> SrcDecl 
-mkDecl (Just (x, t)) (Decl b e l) 
-  | x == bindId b    = Decl b (EAnn  e (generalize t) (label e)) l 
-  | otherwise        = error $ "bad annotation: " ++ show (x, bindId b) 
-mkDecl (Just (x, t)) (RDecl b e l) 
-  | x == bindId b    = RDecl b (EAnn e (generalize t) (label e)) l 
-  | otherwise        = error $ "bad annotation: " ++ show (x, bindId b) 
+mkDecl :: Ann -> SrcDecl -> SrcDecl
+mkDecl (Just (x, t)) (Decl b e l)
+  | x == bindId b    = Decl b (EAnn  e (generalize t) (label e)) l
+  | otherwise        = error $ "bad annotation: " ++ show (x, bindId b)
+mkDecl (Just (x, t)) (RDecl b e l)
+  | x == bindId b    = RDecl b (EAnn e (generalize t) (label e)) l
+  | otherwise        = error $ "bad annotation: " ++ show (x, bindId b)
 mkDecl Nothing    d  = d
 
 plainDecl :: FP.Parser SrcDecl
 plainDecl = withSpan' $ do
   ctor <- (FP.reserved "let rec" >> pure RDecl) <|>
-          (FP.reserved "let"     >> pure Decl) 
-  b    <- binder 
+          (FP.reserved "let"     >> pure Decl)
+  b    <- binder
   FP.reservedOp "="
-  e    <- expr 
-  FP.semi 
-  return (ctor b e) 
+  e    <- expr
+  FP.semi
+  return (ctor b e)
 
 -- | `binder` parses SrcBind, used for let-binds and function parameters.
 binder :: FP.Parser SrcBind
 binder = withSpan' (Bind <$> identifier)
 
 --------------------------------------------------------------------------------
--- | Top level Rtype parser 
+-- | Top level Rtype parser
 --------------------------------------------------------------------------------
 rtype :: FP.Parser RType
 rtype =  try rfun <|> rtype0
 
 rtype0 :: FP.Parser RType
-rtype0 = parens rtype 
-      <|> rbase 
+rtype0 = parens rtype
+      <|> rbase
 
 rfun :: FP.Parser RType
 rfun  = mkTFun <$> funArgP <*> (FP.reservedOp "=>" *> rtype)
 
 funArgP :: FP.Parser FunArg
 funArgP = try ((,) <$> FP.lowerIdP <*> (colon *> rtype0))
-      <|> ((junkSymbol,) <$> rtype0)
+      <|> ((\i t -> (anon i, t)) <$> FP.freshIntP <*> rtype0)
 
 mkTFun :: (F.Symbol, RType) -> RType -> RType
-mkTFun (x, s) = TFun x s 
+mkTFun (x, s) = TFun x s
 
 rbase :: FP.Parser RType
 rbase =  try (TBase <$> tbase <*> refTop)
@@ -279,15 +280,15 @@ tbase =  (reserved "int"  >>  pure TInt)
      <|> (reserved "bool" >>  pure TBool)
      <|> (tvarP >>= return . TVar. TV)
 
-tvarP :: FP.Parser F.Symbol 
-tvarP = FP.reservedOp "'" >> FP.lowerIdP  -- >>= return . TVar . TV 
+tvarP :: FP.Parser F.Symbol
+tvarP = FP.reservedOp "'" >> FP.lowerIdP  -- >>= return . TVar . TV
 
 refTop :: FP.Parser Reft
-refTop = brackets reftB <|> pure mempty 
+refTop = brackets reftB <|> pure mempty
 
 reftB :: FP.Parser Reft
-reftB =  (question >> pure Unknown) 
-     <|> concReftB 
+reftB =  (question >> pure Unknown)
+     <|> concReftB
 
 concReftB :: FP.Parser Reft
 concReftB = KReft <$> (FP.lowerIdP <* mid) <*> myPredP
@@ -327,7 +328,7 @@ question = FP.reservedOp "?"
 
 
 -- | list of reserved words
-keywords :: S.Set String 
+keywords :: S.Set String
 keywords = S.fromList
   [ "if"      , "else"
   , "true"    , "false"

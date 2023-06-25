@@ -29,7 +29,7 @@ import qualified Language.Fixpoint.Types       as F
 import qualified Language.Sprite.Common.UX     as UX
 import           Language.Sprite.Common
 import           Language.Sprite.L4.Types
-import Language.Sprite.Common.Constraints (cAll')
+import Language.Sprite.Common.Constraints (cAll', isAnon)
 
 --------------------------------------------------------------------------------
 -- | Constraints ---------------------------------------------------------------
@@ -58,7 +58,7 @@ data Env = Env
 
 extEnv :: Env -> F.Symbol -> RType -> Env
 extEnv env x t
-  | x == junkSymbol = env
+  | isAnon x = env
   | otherwise       = env { eBinds = F.insertSEnv x t (eBinds env)
                           , eSize  = 1 + eSize env
                           }

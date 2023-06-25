@@ -55,24 +55,30 @@ checkValidPLE f q = do
 
 checkValidWithCfg :: FilePath -> FC.Config -> SrcQuery -> IO SrcResult
 checkValidWithCfg f cfg q = do
-  case simplifyCstr (H.qCstr q) of
-    Nothing -> return $ F.Safe mempty
+  case canonCstr (H.qCstr q) of
+    Nothing -> error "YO" -- return $ F.Safe mempty
     Just c  -> do
       let q' = (q { H.qCstr = c } )
       dumpQuery f q'
       fmap snd . F.resStatus <$> H.solve cfg q'
 
-simplifyCstr :: H.Cstr a -> Maybe (H.Cstr a)
-simplifyCstr = go
+canonCstr :: H.Cstr a -> Maybe (H.Cstr a)
+canonCstr = go
   where
     go c@(H.Head {}) = Just c
-    go (H.CAnd cs) = case Mb.mapMaybe go cs of
-                       []  -> Nothing
-                       [c] -> Just c
-                       cs' -> Just (H.CAnd cs')
-    go (H.All b c) = do { c' <- go c; Just ( H.All b c' ) }
-    go (H.Any b c) = do { c' <- go c; Just ( H.Any b c' ) }
+    go (H.CAnd cs)   = mkAnd (Mb.mapMaybe go cs)
+    go (H.All b c)   = H.All b <$> go c
+    go _             = error "canonCstr:impossible"
 
+isTauto :: H.Cstr a -> Bool
+isTauto (H.CAnd []) = True
+isTauto _           = False
+
+mkAnd :: [H.Cstr a] -> Maybe (H.Cstr a)
+mkAnd cs = case filter (not . isTauto) cs of
+             []  -> Nothing
+             [c] -> Just c
+             cs' -> Just (H.CAnd cs')
 
 fpConfig :: FC.Config
 fpConfig = FC.defConfig
@@ -80,11 +86,9 @@ fpConfig = FC.defConfig
 
 dumpQuery :: FilePath -> SrcQuery -> IO ()
 dumpQuery f q = when True $ do
-  -- putStrLn (F.wrapStars "BEGIN: Horn VC")
   let smtFile = F.extFileName F.Smt2 f
   F.ensurePath smtFile
   writeFile smtFile (PJ.render . F.pprint $ q)
-  -- putStrLn (F.wrapStars "END: Horn VC")
 
 ---------------------------------------------------------------------------
 resultExit :: SrcResult -> IO ExitCode
@@ -106,18 +110,7 @@ resultStr (F.Safe {})     = "Safe"
 resultStr (F.Unsafe {})   = "Unsafe"
 resultStr (F.Crash _ msg) = "Crash!: " ++ msg
 
-canonCstr :: H.Cstr a -> Maybe (H.Cstr a)
-canonCstr = go
-  where
-    go c@(H.Head {}) = Just c
-    go (H.CAnd cs)   = mkAnd (Mb.mapMaybe canonCstr cs)
-    go (H.All b c)   = H.All b <$> canonCstr c
-    go _             = error "canonCstr:impossible"
 
-mkAnd :: [H.Cstr a] -> Maybe (H.Cstr a)
-mkAnd []  = Nothing
-mkAnd [c] = Just c
-mkAnd cs  = Just (H.CAnd cs)
 
 ---------------------------------------------------------------------------------
 nat :: F.Expr -> F.Expr

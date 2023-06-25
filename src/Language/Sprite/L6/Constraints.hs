@@ -4,7 +4,8 @@
 {-# LANGUAGE OverloadedStrings    #-}
 
 module Language.Sprite.L6.Constraints
-  ( -- * Constraints
+  (
+    -- * Constraints
     cAnd, cHead, cAll, cAllF, cImpl, pAnd
 
     -- * Substitutions
@@ -37,6 +38,8 @@ import           Language.Sprite.Common
 import           Language.Sprite.L6.Types
 import           Language.Sprite.L6.Prims
 import Language.Sprite.Common.Constraints
+
+
 
 --------------------------------------------------------------------------------
 -- | Constraints ---------------------------------------------------------------
@@ -74,7 +77,7 @@ data Env = Env
 
 extEnv :: Env -> F.Symbol -> RType -> Env
 extEnv env x t
-  | x == junkSymbol = env
+  | isAnon x = env
   | otherwise       = env { eBinds = F.insertSEnv x t (eBinds env)
                           , eSize  = 1 + eSize env
                           }

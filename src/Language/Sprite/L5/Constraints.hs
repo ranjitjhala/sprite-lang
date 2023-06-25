@@ -66,7 +66,7 @@ data Env = Env
 
 extEnv :: Env -> F.Symbol -> RType -> Env
 extEnv env x t
-  | x == junkSymbol = env
+  | isAnon x = env
   | otherwise       = env { eBinds = F.insertSEnv x t (eBinds env)
                           , eSize  = 1 + eSize env
                           }

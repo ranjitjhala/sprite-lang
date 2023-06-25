@@ -68,7 +68,7 @@ sub l (TFun x1 s1 t1) (TFun x2 s2 t2) = do
 sub l s@(TCon c1 t1s (Known v _)) (TCon c2 t2s (Known w q)) | c1 == c2 = do
   let cTop = cAll l v s (cHead l (subst q w v))
   cIns    <- subs l t1s t2s
-  return (Misc.traceShow "SUB-LIST" $ cAnd cTop cIns)
+  return ({- Misc.traceShow "SUB-LIST" $ -} cAnd cTop cIns)
 
 sub l t1 t2 = failWith ("sub: cannot handle:" <+> UX.tshow (t1, t2)) l
 
@@ -278,7 +278,7 @@ synth g (ETApp e t l) = do
   (ce, te)   <- synth g e
   case te of
     TAll a s -> do tt <- {- Misc.traceShow "REFRESH" <$> -} refresh l g t
-                   return (ce, Misc.traceShow "SYN-TApp: " $ tsubst a tt s)
+                   return (ce, {- Misc.traceShow "SYN-TApp: " $ -} tsubst a tt s)
     _        -> failWith "Type Application to non-forall" l
 
 synth _ e =

@@ -322,7 +322,7 @@ synth g (ETApp e t l) = do
   (ce, te)   <- synth g e
   case te of
     TAll a s -> do tt <- {- Misc.traceShow "REFRESH" <$> -} refresh l g t
-                   return (ce, Misc.traceShow "SYN-TApp: " $ tsubst a tt s)
+                   return (ce, {- Misc.traceShow "SYN-TApp: " $ -} tsubst a tt s)
     _        -> failWith "Type Application to non-forall" l
 
 {- [Syn-RApp]

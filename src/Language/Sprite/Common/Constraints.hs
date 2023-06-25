@@ -22,7 +22,10 @@ cAnd :: SrcCstr -> SrcCstr -> SrcCstr
 cAnd (H.CAnd []) c           = c
 cAnd c           (H.CAnd []) = c
 cAnd (H.CAnd cs) (H.CAnd ds) = H.CAnd (cs ++ ds)
+cAnd (H.CAnd cs) d           = H.CAnd (cs ++ [d])
+cAnd d           (H.CAnd cs) = H.CAnd (d : cs)
 cAnd c1          c2          = H.CAnd [c1, c2]
+
 
 pAnd :: [H.Pred] -> H.Pred
 pAnd ps = case filter (not . pTrivial) ps of

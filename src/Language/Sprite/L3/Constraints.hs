@@ -5,7 +5,7 @@
 
 module Language.Sprite.L3.Constraints
   ( -- * Constraints
-    cTrue, cAnd, cHead, cAll
+    cAll
 
     -- * Substitutions
   , subst, substImm
@@ -29,25 +29,11 @@ import qualified Language.Fixpoint.Types       as F
 import qualified Language.Sprite.Common.UX     as UX
 import           Language.Sprite.Common
 import           Language.Sprite.L3.Types
-import Language.Sprite.Common.Constraints (cAll')
+import Language.Sprite.Common.Constraints
 
 --------------------------------------------------------------------------------
 -- | Constraints ---------------------------------------------------------------
 --------------------------------------------------------------------------------
-cTrue :: SrcCstr
-cTrue = H.CAnd []
-
-cAnd :: SrcCstr -> SrcCstr -> SrcCstr
-cAnd (H.CAnd []) c           = c
-cAnd c           (H.CAnd []) = c
-cAnd c1          c2          = H.CAnd [c1, c2]
-
-cHead :: F.SrcSpan -> H.Pred -> SrcCstr
-cHead _ (H.PAnd []) = cTrue
-cHead _ (H.Reft p)
-  | F.isTautoPred p = cTrue
-cHead l p           = H.Head p (UX.mkError "Subtype error" l)
-
 cAll :: F.SrcSpan -> F.Symbol -> RType -> SrcCstr -> SrcCstr
 cAll l x t = cAll' l x (sortPred x t)
 

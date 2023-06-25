@@ -18,7 +18,7 @@ import           System.Console.CmdArgs.Verbosity (whenLoud)
 import           Debug.Trace (trace)
 
 safeZip :: [a] -> [b] -> Maybe [(a, b)]
-safeZip xs ys 
+safeZip xs ys
   | length xs == length ys = Just (zip xs ys)
   | otherwise              = Nothing
 
@@ -52,7 +52,7 @@ trim :: String -> String
 trim = f . f  where f = reverse . dropWhile isSpace
 
 trimEnd :: String -> String
-trimEnd = reverse . dropWhile isSpace . reverse  
+trimEnd = reverse . dropWhile isSpace . reverse
 
 executeShellCommand :: FilePath -> String -> Int -> IO ExitCode
 executeShellCommand logF cmd n = fromMaybe (ExitFailure 100) <$> body
@@ -80,7 +80,7 @@ handleIO :: FilePath -> IOException -> IO (Either String a)
 handleIO f e = return . Left $ "Warning: Couldn't open " <> f <> ": " <> show e
 
 traceShow :: (Show a) => String -> a -> a
-traceShow msg x = trace (printf "TRACE: %s = %s" msg (show x)) x
+traceShow msg x = {- trace (printf "TRACE: %s = %s" msg (show x)) -} x
 
 safeHead :: a -> [a] -> a
 safeHead def []    = def

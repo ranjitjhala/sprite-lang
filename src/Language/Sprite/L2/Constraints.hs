@@ -5,7 +5,7 @@
 
 module Language.Sprite.L2.Constraints
   ( -- * Constraints
-    cTrue, cAnd, cHead, cAll
+    cAll
 
     -- * Substitutions
   , subst, substImm
@@ -27,14 +27,14 @@ import Language.Sprite.Common.Constraints (cAll')
 --------------------------------------------------------------------------------
 -- | Constraints ---------------------------------------------------------------
 --------------------------------------------------------------------------------
-cTrue :: SrcCstr
-cTrue = H.CAnd []
+-- cTrue :: SrcCstr
+-- cTrue = H.CAnd []
 
-cAnd :: SrcCstr -> SrcCstr -> SrcCstr
-cAnd c1 c2 = H.CAnd [c1, c2]
+-- cAnd :: SrcCstr -> SrcCstr -> SrcCstr
+-- cAnd c1 c2 = H.CAnd [c1, c2]
 
-cHead :: F.SrcSpan -> F.Expr -> SrcCstr
-cHead l e = H.Head (H.Reft e) (UX.mkError "Subtype error" l)
+-- cHead :: F.SrcSpan -> F.Expr -> SrcCstr
+-- cHead l e = H.Head (H.Reft e) (UX.mkError "Subtype error" l)
 
 cAll :: F.SrcSpan -> F.Symbol -> RType -> SrcCstr -> SrcCstr
 cAll l x t = cAll' l x (sortPred x t)

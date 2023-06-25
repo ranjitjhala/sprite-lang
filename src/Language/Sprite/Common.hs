@@ -68,6 +68,7 @@ simplifyCstr = go
     go c@(H.Head {}) = Just c
     go (H.CAnd cs) = case Mb.mapMaybe go cs of
                        []  -> Nothing
+                       [c] -> Just c
                        cs' -> Just (H.CAnd cs')
     go (H.All b c) = do { c' <- go c; Just ( H.All b c' ) }
     go (H.Any b c) = do { c' <- go c; Just ( H.Any b c' ) }

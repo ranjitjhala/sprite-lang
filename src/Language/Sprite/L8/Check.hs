@@ -89,7 +89,7 @@ strengthenInv g = go
     go c           = c
 
 strengthenBind :: Env -> H.Bind a -> H.Bind a
-strengthenBind g b@(H.Bind x t p a) = case getInv g x t of
+strengthenBind g b@(H.Bind x t p a) = case Misc.traceShow ("GETINV: " ++ show (x, t)) $ getInv g x t of
   Nothing -> b
   Just p' -> H.Bind x t (p <> p') a
 

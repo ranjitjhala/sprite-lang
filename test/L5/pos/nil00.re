@@ -5,8 +5,8 @@ type list('a) =
   | Cons (x:'a, xs:list('a)) => [v| len v = 1 + len(xs)]
   ;
 
-/*@ val singleton : 'a => list('a)[v|len v = 0] */
-let singleton = (x) => {
+/*@ val emptylist : 'a => list('a)[v|len v = 0] */
+let emptylist = (x) => {
   let t = Nil;
   t
 };

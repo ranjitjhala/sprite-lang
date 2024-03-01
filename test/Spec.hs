@@ -36,8 +36,8 @@ main :: IO ()
 main = defaultMainWithIngredients [testRunner] =<< allTests
 
 allTests = group "Tests"
-  [ l1Tests 
-  , l2Tests 
+  [ l1Tests
+  , l2Tests
   , l3Tests
   , l4Tests
   , l5Tests
@@ -46,52 +46,52 @@ allTests = group "Tests"
   ]
 
 l1Tests :: IO TestTree
-l1Tests = group "L1" $ langTests "L1" 1 
+l1Tests = group "L1" $ langTests "L1" 1
 
 l2Tests :: IO TestTree
-l2Tests = group "L2" $ langTests "L1" 2 
-                    ++ langTests "L2" 2 
+l2Tests = group "L2" $ langTests "L1" 2
+                    ++ langTests "L2" 2
 
 l3Tests :: IO TestTree
-l3Tests = group "L3" $ langTests "L1" 3 
-                    ++ langTests "L2" 3 
-                    ++ langTests "L3" 3 
+l3Tests = group "L3" $ langTests "L1" 3
+                    ++ langTests "L2" 3
+                    ++ langTests "L3" 3
 
 l4Tests :: IO TestTree
-l4Tests = group "L4" $ langTests "L1" 4 
-                    ++ langTests "L2" 4 
-                    ++ langTests "L3" 4 
-                    ++ langTests "L4" 4 
+l4Tests = group "L4" $ langTests "L1" 4
+                    ++ langTests "L2" 4
+                    ++ langTests "L3" 4
+                    ++ langTests "L4" 4
 
 l5Tests :: IO TestTree
-l5Tests = group "L5" $ langTests "L1" 5 
-                    ++ langTests "L2" 5 
-                    ++ langTests "L3" 5 
-                    ++ langTests "L4" 5 
-                    ++ langTests "L5" 5 
+l5Tests = group "L5" $ langTests "L1" 5
+                    ++ langTests "L2" 5
+                    ++ langTests "L3" 5
+                    ++ langTests "L4" 5
+                    ++ langTests "L5" 5
 
 l6Tests :: IO TestTree
-l6Tests = group "L6" $ langTests "L1" 6 
-                    ++ langTests "L2" 6 
-                    ++ langTests "L3" 6 
-                    ++ langTests "L4" 6 
-                    ++ langTests "L5" 6 
-                    ++ langTests "L6" 6 
+l6Tests = group "L6" $ langTests "L1" 6
+                    ++ langTests "L2" 6
+                    ++ langTests "L3" 6
+                    ++ langTests "L4" 6
+                    ++ langTests "L5" 6
+                    ++ langTests "L6" 6
 
 l8Tests :: IO TestTree
-l8Tests = group "L8" $ langTests "L7" 8 
-                    ++ langTests "L8" 8 
+l8Tests = group "L8" $ langTests "L7" 8
+                    ++ langTests "L8" 8
 
 
 langTests :: String -> Int -> [IO TestTree]
-langTests lang n = 
+langTests lang n =
   [ testGroup (name "pos") <$> dirTests (spriteCmd n) (dir "pos") []  ExitSuccess
   , testGroup (name "neg") <$> dirTests (spriteCmd n) (dir "neg") []  (ExitFailure 1)
   ]
-  where 
+  where
     name :: String -> String
     name k = printf "%s-%s-%d" k lang n
-    dir  k = "test" </> lang </> k  
+    dir  k = "test" </> lang </> k
 
 testRunner :: Ingredient
 testRunner = rerunningTests
@@ -119,7 +119,7 @@ combineReporters _ _ = error "combineReporters needs TestReporters"
 ---------------------------------------------------------------------------
 dirTests :: TestCmd -> FilePath -> [FilePath] -> ExitCode -> IO [TestTree]
 ---------------------------------------------------------------------------
-dirTests testCmd root ignored code = do 
+dirTests testCmd root ignored code = do
   files    <- walkDirectory root
   let tests = [ rel | f <- files, isTest f, let rel = makeRelative root f, rel `notElem` ignored ]
   return    $ mkTest testCmd code root <$> tests
@@ -138,7 +138,7 @@ mkTest testCmd code dir file
         assertEqual "" True True
       else do
         createDirectoryIfMissing True $ takeDirectory log
-        bin <- binPath execName 
+        bin <- binPath execName
         withFile log WriteMode $ \h -> do
           let cmd     = testCmd bin dir file
           (_,_,_,ph) <- createProcess $ (shell cmd) {std_out = UseHandle h, std_err = UseHandle h}
@@ -154,7 +154,7 @@ binPath pkgName = (</> pkgName) <$> getBinDir
 knownToFail = []
 
 ---------------------------------------------------------------------------
--- | Project specific configuration --------------------------------------- 
+-- | Project specific configuration ---------------------------------------
 ---------------------------------------------------------------------------
 
 type TestCmd = FilePath -> FilePath -> FilePath -> String
@@ -196,6 +196,84 @@ concatMapM :: Applicative m => (a -> m [b]) -> [a] -> m [b]
 concatMapM _ []     = pure []
 concatMapM f (x:xs) = (++) <$> f x <*> concatMapM f xs
 
+-- -- this is largely based on ocharles' test runner at
+-- -- https://github.com/ocharles/tasty-ant-xml/blob/master/Test/Tasty/Runners/AntXML.hs#L65
+-- loggingTestReporter :: Ingredient
+-- loggingTestReporter = TestReporter [] $ \opts tree -> Just $ \smap -> do
+--   let
+--     runTest _ testName _ = Traversal $ Functor.Compose $ do
+--         i <- State.get
+
+--         summary <- lift $ STM.atomically $ do
+--           status <- STM.readTVar $
+--             fromMaybe (error "Attempted to lookup test by index outside bounds") $
+--               IntMap.lookup i smap
+
+--           let mkSuccess time = [(testName, time, True)]
+--               mkFailure time = [(testName, time, False)]
+
+--           case status of
+--             -- If the test is done, generate a summary for it
+--             Done result
+--               | resultSuccessful result
+--                   -> pure (mkSuccess (resultTime result))
+--               | otherwise
+--                   -> pure (mkFailure (resultTime result))
+--             -- Otherwise the test has either not been started or is currently
+--             -- executing
+--             _ -> STM.retry
+
+--         Const summary <$ State.modify (+ 1)
+
+--     runGroup group children = Traversal $ Functor.Compose $ do
+--       Const soFar <- Functor.getCompose $ getTraversal children
+--       pure $ Const $ map (\(n,t,s) -> (group</>n,t,s)) soFar
+
+--     computeFailures :: StatusMap -> IO Int
+--     computeFailures = fmap getSum . getApp . foldMap (\var -> Ap $
+--       (\r -> Sum $ if resultSuccessful r then 0 else 1) <$> getResultFromTVar var)
+
+--     getResultFromTVar :: STM.TVar Status -> IO Result
+--     getResultFromTVar var =
+--       STM.atomically $ do
+--         status <- STM.readTVar var
+--         case status of
+--           Done r -> return r
+--           _ -> STM.retry
+
+--   (Const summary, _tests) <-
+--      flip State.runStateT 0 $ Functor.getCompose $ getTraversal $
+--       foldTestTree
+--         trivialFold { foldSingle = runTest, foldGroup = runGroup }
+--         opts
+--         tree
+
+--   return $ \_elapsedTime -> do
+--     -- get some semblance of a hostname
+--     host <- takeWhile (/='.') . takeWhile (not . isSpace) <$> readProcess "hostname" [] []
+--     -- don't use the `time` package, major api differences between ghc 708 and 710
+--     time <- head . lines <$> readProcess "date" ["+%Y-%m-%dT%H-%M-%S"] []
+--     -- build header
+--     ref <- gitRef
+--     timestamp <- gitTimestamp
+--     epochTime <- gitEpochTimestamp
+--     hash <- gitHash
+--     let hdr = unlines [ref ++ " : " ++ hash,
+--                        "Timestamp: " ++ timestamp,
+--                        "Epoch Timestamp: " ++ epochTime,
+--                        headerDelim,
+--                        "test, time(s), result"]
+
+
+--     let dir = "test" </> "logs" </> host ++ "-" ++ time
+--     let smry = "test" </> "logs" </> "cur" </> "summary.csv"
+--     writeFile smry $ unlines
+--                    $ hdr
+--                    : map (\(n, t, r) -> printf "%s, %0.4f, %s" n t (show r)) summary
+--     -- system $ "cp -r tests/logs/cur " ++ dir
+--     (==0) <$> computeFailures smap
+
+
 -- this is largely based on ocharles' test runner at
 -- https://github.com/ocharles/tasty-ant-xml/blob/master/Test/Tasty/Runners/AntXML.hs#L65
 loggingTestReporter :: Ingredient
@@ -225,9 +303,9 @@ loggingTestReporter = TestReporter [] $ \opts tree -> Just $ \smap -> do
 
         Const summary <$ State.modify (+ 1)
 
-    runGroup group children = Traversal $ Functor.Compose $ do
-      Const soFar <- Functor.getCompose $ getTraversal children
-      pure $ Const $ map (\(n,t,s) -> (group</>n,t,s)) soFar
+    runGroup _ group' children = Traversal $ Functor.Compose $ do
+      Const soFar <- Functor.getCompose $ getTraversal $ mconcat children
+      pure $ Const $ map (\(n,t,s) -> (group' </> n,t,s)) soFar
 
     computeFailures :: StatusMap -> IO Int
     computeFailures = fmap getSum . getApp . foldMap (\var -> Ap $
@@ -249,10 +327,7 @@ loggingTestReporter = TestReporter [] $ \opts tree -> Just $ \smap -> do
         tree
 
   return $ \_elapsedTime -> do
-    -- get some semblance of a hostname
-    host <- takeWhile (/='.') . takeWhile (not . isSpace) <$> readProcess "hostname" [] []
     -- don't use the `time` package, major api differences between ghc 708 and 710
-    time <- head . lines <$> readProcess "date" ["+%Y-%m-%dT%H-%M-%S"] []
     -- build header
     ref <- gitRef
     timestamp <- gitTimestamp
@@ -264,14 +339,13 @@ loggingTestReporter = TestReporter [] $ \opts tree -> Just $ \smap -> do
                        headerDelim,
                        "test, time(s), result"]
 
-
-    let dir = "test" </> "logs" </> host ++ "-" ++ time
     let smry = "test" </> "logs" </> "cur" </> "summary.csv"
     writeFile smry $ unlines
                    $ hdr
                    : map (\(n, t, r) -> printf "%s, %0.4f, %s" n t (show r)) summary
-    -- system $ "cp -r tests/logs/cur " ++ dir
     (==0) <$> computeFailures smap
+
+
 
 
 gitTimestamp :: IO String

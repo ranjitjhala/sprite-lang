@@ -1,5 +1,5 @@
 # resolver: lts-16.10
-resolver: lts-18.27
+resolver: nightly-2024-01-26
 
 packages:
   - '.'
@@ -9,9 +9,7 @@ extra-deps:
 - located-base-0.1.1.1
 - text-format-0.3.2
 - tasty-rerun-1.1.14
-- rest-rewrite-0.4.0@sha256:be93d899f7dece33f2a7613eb3dabd24d139f9cb2fc09f9efedfdce4ba6eb276,3923
-- git: https://github.com/ucsd-progsys/liquid-fixpoint
-  commit: 98d21934ceda146b4280c73552cc387d0c497f56
+- rest-rewrite-0.4.2
 
 # compiler: ghc-8.10.2
 allow-newer: true

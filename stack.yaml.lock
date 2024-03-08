@@ -5,54 +5,54 @@
 
 packages:
 - completed:
-    hackage: intern-0.9.2@sha256:85eae3bd0a6cbfc622c0c70aa476641971bcd5e59dbc4c7a4b17888e432a5bd5,1619
+    hackage: store-0.7.18@sha256:af32079e0d31413b97a1759f8ad8555507857cd4ac4015e195fb5b0a27a3ce9f,8159
     pantry-tree:
-      sha256: 23a96e5332f89615698291ed8e28a410b8a4a01af70de15869a8565602d89360
-      size: 921
+      sha256: 6e9fb2c1c59a9f2fb62abd0016841417b57b9a3e045088d48d65cc740cb1eeb9
+      size: 1292
   original:
-    hackage: intern-0.9.2
+    hackage: store-0.7.18@sha256:af32079e0d31413b97a1759f8ad8555507857cd4ac4015e195fb5b0a27a3ce9f,8159
 - completed:
-    hackage: located-base-0.1.1.1@sha256:7c6395f2b6fbf2d5f76c3514f774423838c0ea94e1c6a5530dd3c94b30c9d1c8,1904
+    hackage: store-core-0.4.4.7@sha256:a2ea427ff0dde30252474dcb0641cb6928cb8a93cd5ee27d4c22adba8e729683,1489
     pantry-tree:
-      sha256: 9d7b96ce785b464253dcf0ac2d8eb0be4cae6b96ed3960d66b81c373b540ed3f
-      size: 534
+      sha256: 67828df739695d14f81cd572a3085c76f65ac75f8417095afef8dfb2815f523e
+      size: 271
   original:
-    hackage: located-base-0.1.1.1
+    hackage: store-core-0.4.4.7@sha256:a2ea427ff0dde30252474dcb0641cb6928cb8a93cd5ee27d4c22adba8e729683,1489
 - completed:
-    hackage: text-format-0.3.2@sha256:2a3fc17cf87120fcfdbca62a0da59759755549285841cdc1483081c35fb3d115,1814
+    hackage: rest-rewrite-0.4.3@sha256:915fb98b8c0a0f518c1a4b75bcf3ae27a3ebd5b10d60cc16a216c2fca2148ab0,3929
     pantry-tree:
-      sha256: 2db26ddb77184186e0d5b2b020bdfbeb044c168024767b1fa3691682ca618896
-      size: 1029
+      sha256: 4de44fbeb7bd655caeafe605406c0bc5fe1788d9cf37cdac2f18b018ee4cf5e6
+      size: 4075
   original:
-    hackage: text-format-0.3.2
+    hackage: rest-rewrite-0.4.3
 - completed:
-    hackage: tasty-rerun-1.1.14@sha256:ba9c19a281535bea566e1044bc02c36ef17abcb310af4b6a149ec11780c7ce35,3083
+    hackage: smtlib-backends-0.3@sha256:a947aead99f6a314833bddca9b502d5faea8d3bd2fc76ffb53c34d5c5b7557bc,1211
     pantry-tree:
-      sha256: f6b89e2e06d38d0a2d73c220648811a54684b476778904416b22f1ccae7eab67
-      size: 284
+      sha256: 97b88a647ac996808a93b2eab62e9e8574d9b9a451ee37a9103e209b63be012d
+      size: 275
   original:
-    hackage: tasty-rerun-1.1.14
+    hackage: smtlib-backends-0.3@rev:2
 - completed:
-    hackage: rest-rewrite-0.4.0@sha256:be93d899f7dece33f2a7613eb3dabd24d139f9cb2fc09f9efedfdce4ba6eb276,3923
+    hackage: smtlib-backends-process-0.3@sha256:caf131d3d6f6825e3a3182713130a8e14d0bd6530eeda643e8a511b546ff1a26,1676
     pantry-tree:
-      sha256: ad19ccb2185ac0b58ddfd2eede69e6444986e687232e1504eb04ce7bb6e39368
-      size: 4018
+      sha256: 7147fef29b4270275168a285fc0c68784329d1276ab9e44e9a45f8d79b526220
+      size: 461
   original:
-    hackage: rest-rewrite-0.4.0@sha256:be93d899f7dece33f2a7613eb3dabd24d139f9cb2fc09f9efedfdce4ba6eb276,3923
+    hackage: smtlib-backends-process-0.3@rev:2
 - completed:
-    commit: 98d21934ceda146b4280c73552cc387d0c497f56
+    commit: 794aed1388442e64ced07a7f53c5aba14ce01a24
     git: https://github.com/ucsd-progsys/liquid-fixpoint
     name: liquid-fixpoint
     pantry-tree:
-      sha256: 5b1e52d72c36c441b0291c03cd71b853e2df87242b7004a64b1cd44ab81485f1
-      size: 22680
-    version: 0.8.10.7.1
+      sha256: f2c83fcfb48793f10fcc0522f77fbf002ca2d28a07a0ea02b4d6a8b0778e7f0c
+      size: 23600
+    version: 0.9.6.3
   original:
-    commit: 98d21934ceda146b4280c73552cc387d0c497f56
+    commit: 794aed1388442e64ced07a7f53c5aba14ce01a24
     git: https://github.com/ucsd-progsys/liquid-fixpoint
 snapshots:
 - completed:
-    sha256: 79a786674930a89301b0e908fad2822a48882f3d01486117693c377b8edffdbe
-    size: 590102
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/18/27.yaml
-  original: lts-18.27
+    sha256: 876a5c75d90718add42e1ad36d66000bf35050ce1c66748119897a32df613186
+    size: 563963
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2024/1/26.yaml
+  original: nightly-2024-01-26

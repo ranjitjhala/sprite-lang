@@ -157,7 +157,12 @@ rfun  = mkTFun <$> funArg <*> (FP.reservedOp "=>" *> rtype)
 
 funArg :: FP.Parser (F.Symbol, RType)
 funArg = try ((,) <$> FP.lowerIdP <*> (FP.colon *> rtype0))
-      <|> (("_",) <$> rtype0)
+      <|> ((,) <$> freshArgSymbolP <*> rtype0)
+
+freshArgSymbolP :: FP.Parser F.Symbol
+freshArgSymbolP = do
+  n <- FP.freshIntP
+  return $ F.symbol ("_arg" ++ show n)
 
 mkTFun :: (F.Symbol, RType) -> RType -> RType
 mkTFun (x, s) = TFun x s

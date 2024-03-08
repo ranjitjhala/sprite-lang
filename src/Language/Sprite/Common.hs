@@ -74,6 +74,7 @@ checkValidPLE f q = do
 checkValidWithCfg :: FilePath -> FC.Config -> SrcQuery -> IO SrcResult
 checkValidWithCfg f cfg q = do
   dumpQuery f q
+  -- return $ F.Crash [] "debug"
   fmap snd . F.resStatus <$> H.solve cfg q
 
 fpConfig :: FC.Config
@@ -82,11 +83,11 @@ fpConfig = FC.defConfig
 
 dumpQuery :: FilePath -> SrcQuery -> IO ()
 dumpQuery f q = when True $ do
-  -- putStrLn (F.wrapStars "BEGIN: Horn VC")
+  putStrLn (F.wrapStars "BEGIN: Horn VC")
   let smtFile = F.extFileName F.Smt2 f
   F.ensurePath smtFile
   writeFile smtFile (PJ.render . F.pprint $ q)
-  -- putStrLn (F.wrapStars "END: Horn VC")
+  putStrLn (F.wrapStars "END: Horn VC")
 
 ---------------------------------------------------------------------------
 resultExit :: SrcResult -> IO ExitCode

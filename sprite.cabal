@@ -1,13 +1,11 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.36.0.
 --
 -- see: https://github.com/sol/hpack
---
--- hash: d386618d61376de83f983dcbccf020e50d0bbac3bde98b667b01117472310880
 
 name:           sprite
-version:        0.1.0.0
+version:        0.2.0.0
 description:    Please see the README on GitHub at <https://github.com/githubuser/sprite#readme>
 homepage:       https://github.com/ranjitjhala/sprite#readme
 bug-reports:    https://github.com/ranjitjhala/sprite/issues
@@ -83,14 +81,14 @@ library
   hs-source-dirs:
       src
   build-depends:
-      base                 >= 4.9.1.0 && < 5
+      base >=4.9.1.0 && <5
     , cmdargs
     , containers
     , deepseq
     , directory
     , filepath
-    , liquid-fixpoint >=0.8.10.7.0
-    , megaparsec           >= 7.0.0 && < 10
+    , liquid-fixpoint >=0.9
+    , megaparsec >=7.0.0 && <10
     , mtl
     , parsec
     , parser-combinators
@@ -107,14 +105,14 @@ executable sprite
       app
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      base >=4.9.1.0 && <5
     , cmdargs
-    , containers    >= 0.5
+    , containers
     , deepseq
     , directory
     , filepath
-    , liquid-fixpoint >=0.8
-    , megaparsec >=7.0.0 && < 10
+    , liquid-fixpoint >=0.9
+    , megaparsec >=7.0.0 && <10
     , mtl
     , parsec
     , parser-combinators
@@ -133,14 +131,14 @@ test-suite liquid-tutorial-test
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      base >=4.9.1.0 && <5
     , cmdargs
-    , containers    >= 0.5
+    , containers
     , deepseq
     , directory
     , filepath
-    , liquid-fixpoint >=0.8
-    , megaparsec >=7.0.0 && < 10
+    , liquid-fixpoint >=0.9
+    , megaparsec >=7.0.0 && <10
     , mtl
     , parsec
     , parser-combinators

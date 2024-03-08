@@ -13,7 +13,7 @@ import           Language.Sprite.Common
 sprite :: FilePath -> IO ()
 sprite f = do
   src <- parseFile f
-  print (void src)
+  -- print (void src)
   res <- case vcgen src of
            Left errs -> pure (crash errs "VCGen failure")
            Right vc  -> checkValid f vc

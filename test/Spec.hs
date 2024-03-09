@@ -143,7 +143,7 @@ mkTest testCmd code dir file
           let cmd     = testCmd bin dir file
           (_,_,_,ph) <- createProcess $ (shell cmd) {std_out = UseHandle h, std_err = UseHandle h}
           c          <- waitForProcess ph
-          assertEqual "Wrong exit code" code c
+          assertEqual ("Wrong exit code: " ++ cmd) code c
   where
     test = dir </> file
     log  = let (d,f) = splitFileName file in dir </> d </> ".liquid" </> f <.> "log"

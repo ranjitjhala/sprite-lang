@@ -1,13 +1,9 @@
-# resolver: lts-16.10
 resolver: nightly-2024-01-26
 
 packages:
   - '.'
 
 extra-deps:
-# - intern-0.9.2
-# - located-base-0.1.1.1
-# - text-format-0.3.2
 - store-0.7.18@sha256:af32079e0d31413b97a1759f8ad8555507857cd4ac4015e195fb5b0a27a3ce9f,8159
 - store-core-0.4.4.7@sha256:a2ea427ff0dde30252474dcb0641cb6928cb8a93cd5ee27d4c22adba8e729683,1489
 - rest-rewrite-0.4.3

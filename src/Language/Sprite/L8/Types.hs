@@ -1,9 +1,7 @@
 {-# LANGUAGE DeriveFunctor     #-}
 {-# LANGUAGE PatternSynonyms   #-}
-{-# LANGUAGE BangPatterns      #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeSynonymInstances #-}
-{-# LANGUAGE FlexibleInstances    #-}
+{-# LANGUAGE FlexibleInstances #-}
 
 
 module Language.Sprite.L8.Types where
@@ -16,10 +14,12 @@ import qualified Language.Sprite.Common.UX              as UX
 import           Language.Sprite.Common ( Label(..) )
 import qualified Data.Set                               as S
 import qualified Data.List                              as L
-
+import qualified Data.Char                              as Char
 -- | Basic types --------------------------------------------------------------
 newtype TVar = TV F.Symbol
   deriving (Eq, Ord, Show)
+
+
 
 instance F.Symbolic TVar where
   symbol (TV a) = a
@@ -141,9 +141,26 @@ junkSymbol :: F.Symbol
 junkSymbol = "_"
 
 -- | Names of things ------------------------------------------------------------
-type Ident = F.Symbol                       -- ^ Identifiers
-type DaCon = F.Symbol                       -- ^ Data constructors
-type TyCon = F.Symbol                       -- ^ Type constructors
+type Ident = F.Symbol                    -- ^ Identifiers
+type DaCon = F.Symbol                    -- ^ Data constructors
+
+-- | Names of TyCon -------------------------------------------------------------
+newtype TyCon = TC F.Symbol              -- ^ Type constructors
+  deriving (Eq, Ord, Show)
+
+instance F.Symbolic TyCon where
+  symbol (TC s) = s
+
+tc :: F.Symbol -> TyCon
+tc = TC . upperSym
+  where
+    upperSym s
+      | isUpperSym s = s
+      | otherwise    = F.mappendSym "T" s
+
+    isUpperSym s = case F.symbolString s of
+      []    -> False
+      (c:_) -> Char.isUpper c
 
 -- | "Immediate" terms (can appear as function args & in refinements) -----------
 
@@ -233,7 +250,7 @@ data Prog a = Prog
   deriving (Show, Functor)
 
 data Data a = Data
-  { dcName  :: !Ident                 -- ^ name of the datatype
+  { dcName  :: !TyCon                 -- ^ name of the datatype
   , dcVars  :: ![Ident]               -- ^ type variables
   , dcRVars :: ![RVar]                -- ^ refinement variables
   , dcCtors :: ![(Bind a, RType)]     -- ^ constructors
@@ -435,7 +452,8 @@ bkRAll (TRAll p s) = (p:ps, t) where (ps, t) = bkRAll s
 bkRAll t           = ([]  , t)
 
 fTyCon :: TyCon -> F.FTycon
-fTyCon = F.symbolFTycon . F.dummyLoc . F.mappendSym "T"
+fTyCon = F.symbolFTycon . F.dummyLoc . F.symbol
+
 
 data FunSig = FunSig
   { fsTVars  :: [TVar]            -- ^ type variables

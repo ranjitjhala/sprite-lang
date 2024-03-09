@@ -45,7 +45,7 @@ parseWith = FP.doParse'
 prog :: FP.Parser SrcProg
 prog = do
   qs   <- quals
-  ms   <- (try (many measureP)) <|> return []
+  ms   <- try (many measureP) <|> return []
   typs <- many typP
   src  <- declsExpr <$> many decl
   return (Prog qs ms src typs)
@@ -56,13 +56,13 @@ measureP = annL >> (Misc.mapSnd (rTypeSort . generalize) <$> tyBindP "measure")
 typP :: FP.Parser SrcData
 typP = do
   FP.reserved "type"
-  tc    <- FP.lowerIdP
+  tyc   <- tc <$> FP.lowerIdP
   tvars <- typArgs
   rvars <- commaList refVar
   inv   <- refTop
-  (FP.reservedOp "=" >> FP.spaces)
-  ctors <- fmap (mkCtor tc tvars rvars) <$> ctorsP
-  return (Data tc tvars rvars ctors inv)
+  FP.reservedOp "=" >> FP.spaces
+  ctors <- fmap (mkCtor tyc tvars rvars) <$> ctorsP
+  return (Data tyc tvars rvars ctors inv)
 
 data Ctor   = Ctor SrcBind [FunArg] (Maybe Reft)
 type FunArg = (F.Symbol, RType)
@@ -84,11 +84,10 @@ ctorResP :: FP.Parser (Maybe Reft)
 ctorResP =  Just <$> (FP.reservedOp "=>" *> FP.brackets concReftB)
         <|> return Nothing
 
-mkCtor :: Ident -> [Ident] -> [RVar] -> Ctor -> (SrcBind, RType)
-mkCtor tc tvs rvs c  = (dc, closeType rvs xts dcRes)
+mkCtor :: TyCon -> [Ident] -> [RVar] -> Ctor -> (SrcBind, RType)
+mkCtor tyc tvs rvs c  = (dc, closeType rvs xts dcRes)
   where
-    -- dcType        = foldr (\(x, t) s -> TFun x t s) dcRes xts
-    dcRes         = TCon tc (rVar <$> tvs) (rVarARef <$> rvs) dcReft
+    dcRes         = TCon tyc (rVar <$> tvs) (rVarARef <$> rvs) dcReft
     Ctor dc xts r = c
     dcReft        = Mb.fromMaybe mempty r
 
@@ -328,7 +327,7 @@ mkTFun (x, s) = TFun x s
 
 rbase :: FP.Parser RType
 rbase =  try (TBase <$> tbase <*> refTop)
-     <|> TCon <$> identifier' <*> commaList rtype <*> tConARefs <*> refTop
+     <|> (TCon .  tc <$> identifier') <*> commaList rtype <*> tConARefs <*> refTop
 
 tbase :: FP.Parser Base
 tbase =  (FP.reserved "int"  >>  pure TInt)

@@ -44,6 +44,7 @@ import qualified Language.Sprite.Common.Misc   as Misc
 import           Language.Sprite.Common ( SrcCstr, SrcHVar, bind )
 import           Language.Sprite.L8.Types
 import           Language.Sprite.L8.Prims ( prelude )
+import qualified Data.HashMap.Internal.Strict as M
 
 --------------------------------------------------------------------------------
 -- | Constraints ---------------------------------------------------------------
@@ -158,7 +159,7 @@ getInv env x t = case F.unFApp t of
   _            -> Nothing
 
 getInv' :: Env -> RType -> RType
-getInv' env t@(TCon c _ _ _) = case F.lookupSEnv c (eInv env) of
+getInv' env t@(TCon c _ _ _) = case F.lookupSEnv (F.symbol c) (eInv env) of
                                  Nothing -> t
                                  Just r  -> strengthenTop t r
 getInv' _   t                = t
@@ -171,7 +172,7 @@ empEnv ms typs = foldr (\(x, t) g -> extEnv g x t) env0 prelSigs
 
 tcInvs :: [SrcData] -> F.SEnv Reft
 tcInvs tcs = F.fromListSEnv
-  [ (dcName d, inv) | d <- tcs, let inv@(Known v p) = dcInv d, p /= mempty ]
+  [ (F.symbol (dcName d), inv) | d <- tcs, let inv@(Known v p) = dcInv d, p /= mempty ]
 
 dataSigs :: SrcData -> [(F.Symbol, RType)]
 dataSigs dc = [(F.symbol b, t) | (b, t) <- dcCtors dc]

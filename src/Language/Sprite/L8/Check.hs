@@ -12,6 +12,7 @@ import           Control.Monad.Except           (throwError, catchError)
 import qualified Data.HashMap.Strict            as M
 import           Text.PrettyPrint.HughesPJ (Doc,  (<+>), text )
 import qualified Language.Fixpoint.Horn.Types   as H
+import qualified Language.Fixpoint.Horn.Transformations   as H
 import qualified Language.Fixpoint.Types        as F
 import qualified Language.Fixpoint.Misc         as Misc
 import qualified Language.Sprite.Common.UX      as UX
@@ -37,7 +38,8 @@ vcgen (Prog qs ms e typs) = do
   let syms = M.fromList (ps ++ ms ++ rfls)
   let c'   = strengthenInv env c
   let decs = reflectData <$> {- Misc.traceShow "data-typs" -} typs
-  return   $ mkQuery (qs ++ pqs) (cgiKVars cgi) (cAnd cI c') syms (cgiDefs cgi) decs
+  return   $ mkQuery (qs ++ pqs) (cgiKVars cgi) (H.flatten (cAnd cI c')) syms (cgiDefs cgi) decs
+
 
 mkQuery :: [F.Qualifier]
         -> [H.Var a]
@@ -68,22 +70,6 @@ simplCstr = go
     go (H.All b c) = H.All  (goB b) (go c)
     go c           = c
     goB (H.Bind x t p z) = H.Bind x t p z
-
-
--- simplPred :: H.Pred -> H.Pred
--- simplPred = go
---   where
---     go
---     go (H.PAnd []) = H.Reft mempty
---     go (H.PAnd ps) = H.PAnd [ p' | p' <- go <$> ps, p' /= mempty ]
---     go (H.Reft e)  = undefined
---     go p           = undefined
-
--- flatAnd :: [H.Pred] -> [H.Pred]
--- flatAnd = concatMap go
---   where
---     go (H.PAnd ps) = flatAnd ps
---     go p           = [p]
 
 strengthenInv :: Env -> SrcCstr -> SrcCstr
 strengthenInv g = go
@@ -589,4 +575,4 @@ hvarPred f (Known v p) = Known v (go p)
     go r               = r
 
 predBind :: RVar -> (F.Symbol, RType)
-predBind (RVar p ts) = (p, TCon "Pred" (rSortToRType <$> ts) mempty mempty)
+predBind (RVar p ts) = (p, TCon (tc "Pred") (rSortToRType <$> ts) mempty mempty)

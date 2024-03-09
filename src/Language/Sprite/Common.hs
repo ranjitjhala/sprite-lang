@@ -74,7 +74,6 @@ checkValidPLE f q = do
 checkValidWithCfg :: FilePath -> FC.Config -> SrcQuery -> IO SrcResult
 checkValidWithCfg f cfg q = do
   dumpQuery f q
-  -- return $ F.Crash [] "debug"
   fmap snd . F.resStatus <$> H.solve cfg q
 
 fpConfig :: FC.Config
@@ -108,19 +107,6 @@ resultStr :: SrcResult -> String
 resultStr (F.Safe {})     = "Safe"
 resultStr (F.Unsafe {})   = "Unsafe"
 resultStr (F.Crash _ msg) = "Crash!: " ++ msg
-
-canonCstr :: H.Cstr a -> Maybe (H.Cstr a)
-canonCstr = go
-  where
-    go c@(H.Head {}) = Just c
-    go (H.CAnd cs)   = mkAnd (Mb.mapMaybe canonCstr cs)
-    go (H.All b c)   = H.All b <$> canonCstr c
-    go _             = error "canonCstr:impossible"
-
-mkAnd :: [H.Cstr a] -> Maybe (H.Cstr a)
-mkAnd []  = Nothing
-mkAnd [c] = Just c
-mkAnd cs  = Just (H.CAnd cs)
 
 ---------------------------------------------------------------------------------
 nat :: F.Expr -> F.Expr

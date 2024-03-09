@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.31.1.
+-- This file has been generated from package.yaml by hpack version 0.33.0.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: eec3ac330d3fd6e116066a19b1b1b5f9ce846d99e148e00af9b618d5189e7b16
+-- hash: d386618d61376de83f983dcbccf020e50d0bbac3bde98b667b01117472310880
 
 name:           sprite
 version:        0.1.0.0
@@ -29,6 +29,7 @@ library
   exposed-modules:
       Language.Sprite.Common
       Language.Sprite.Common.Misc
+      Language.Sprite.Common.Parse
       Language.Sprite.Common.UX
       Language.Sprite.L1
       Language.Sprite.L1.Check
@@ -69,20 +70,30 @@ library
       Language.Sprite.L6.Parse
       Language.Sprite.L6.Prims
       Language.Sprite.L6.Types
+      Language.Sprite.L8
+      Language.Sprite.L8.Check
+      Language.Sprite.L8.Constraints
+      Language.Sprite.L8.Elaborate
+      Language.Sprite.L8.Parse
+      Language.Sprite.L8.Prims
+      Language.Sprite.L8.Reflect
+      Language.Sprite.L8.Types
   other-modules:
       Paths_sprite
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      base                 >= 4.9.1.0 && < 5
     , cmdargs
     , containers
     , deepseq
     , directory
     , filepath
-    , liquid-fixpoint >=0.8
+    , liquid-fixpoint >=0.8.10.7.0
+    , megaparsec           >= 7.0.0 && < 10
     , mtl
-    , megaparsec           >= 7.0.0 && < 9
+    , parsec
+    , parser-combinators
     , pretty
     , process
     , unordered-containers
@@ -98,13 +109,15 @@ executable sprite
   build-depends:
       base >=4.7 && <5
     , cmdargs
-    , containers
+    , containers    >= 0.5
     , deepseq
     , directory
     , filepath
     , liquid-fixpoint >=0.8
+    , megaparsec >=7.0.0 && < 10
     , mtl
     , parsec
+    , parser-combinators
     , pretty
     , process
     , sprite
@@ -122,13 +135,15 @@ test-suite liquid-tutorial-test
   build-depends:
       base >=4.7 && <5
     , cmdargs
-    , containers
+    , containers    >= 0.5
     , deepseq
     , directory
     , filepath
     , liquid-fixpoint >=0.8
+    , megaparsec >=7.0.0 && < 10
     , mtl
     , parsec
+    , parser-combinators
     , pretty
     , process
     , sprite

@@ -8,7 +8,7 @@ let rec foldn = (f, acc, i, n) => {
     let ip = i + 1;
     let accp = f(acc, i);
     foldn(f, accp, ip, n)
-  } else { 
+  } else {
     acc
   }
 };
@@ -18,7 +18,9 @@ let add = (x, y) => {
   x + y
 };
 
+/* the zero is an ANF thing as fixpoint kvetches about non-symbol args for kvars sigh */
 /*@ val main : m:int[v|0<=v] => int[v|0<=v] */
 let main = (m) => {
-  foldn(add, 0, 0, m)
+  let zero = 0;
+  foldn(add, zero, zero, m)
 };
